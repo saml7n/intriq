@@ -1,0 +1,30 @@
+{
+    "os": "macOS-13.5-arm64-arm-64bit",
+    "python": "3.11.5",
+    "heartbeatAt": "2023-11-21T12:54:50.695983",
+    "startedAt": "2023-11-21T12:54:50.165670",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "<python with no main file>",
+    "codePathLocal": null,
+    "host": "Sams-MacBook-Air.local",
+    "username": "sam",
+    "executable": "/Users/sam/Projects/intriq/.venv/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 8,
+    "disk": {
+        "/": {
+            "total": 460.4317207336426,
+            "used": 9.275341033935547
+        }
+    },
+    "gpuapple": {
+        "type": "arm",
+        "vendor": "Apple"
+    },
+    "memory": {
+        "total": 24.0
+    }
+}
