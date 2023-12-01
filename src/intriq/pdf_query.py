@@ -1,4 +1,3 @@
-from abc import ABC
 import ssl
 import os
 from unstructured.partition.auto import partition
@@ -13,8 +12,6 @@ from langchain.vectorstores import Chroma
 import streamlit as st
 import pandas as pd
 from loguru import logger
-import json
-import chromadb
 from dotenv import main
 from chromadb.utils import embedding_functions
 from langchain.callbacks import StreamlitCallbackHandler
@@ -24,6 +21,7 @@ import nltk
 import fitz
 import pandas as pd
 
+from fpdf import FPDF
 from intriq.table_representation import table_to_docs
 
 main.load_dotenv()
@@ -55,6 +53,26 @@ def clear_submit():
     st.session_state["submit"] = False
 
 
+def create_pdf_from_excel(excel_file):
+    df = pd.read_excel(excel_file)
+
+    # Initialize FPDF instance
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Add content to the PDF
+    for index, row in df.iterrows():
+        for col in df.columns:
+            pdf.cell(40, 10, f"{row[col]}", border=1)
+        pdf.ln()
+
+    # Create a temporary PDF file
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmpfile:
+        pdf.output(tmpfile.name)
+        return tmpfile.name
+
+
 # drop files here
 uploaded_files = st.file_uploader(
     "Drop all your shit here 💩",
@@ -78,8 +96,8 @@ if uploaded_files:
         if ext.lower() not in ['xlsx', 'xls']:
             logger.warning('not an excel file. Skipping')
             continue
-        # convert to pdf
-        pdf_file = None
+        pdf_file_name = create_pdf_from_excel(uploaded_file)
+        pdf_file = fitz.open(pdf_file_name)
         page = pdf_file[0]
         # for page in pdf_file:
         tabls = page.find_tables()
@@ -146,14 +164,15 @@ if prompt := st.chat_input(placeholder="What is this data about?"):
 
     qa_chain = RetrievalQA.from_chain_type(
         llm,
-        retriever=db.as_retriever()
+        retriever=db.as_retriever(search_kwargs={"k": 5}),
+        return_source_documents=True
     )
 
     with st.chat_message("assistant"):
         st_cb = StreamlitCallbackHandler(
             st.container(), expand_new_thoughts=False)
-        docs = db.similarity_search(prompt)
-        chain.run(
+        # docs = db.similarity_search(prompt)
+        response = qa_chain.run(
             {'query': prompt},
             callbacks=[st_cb]
         )
