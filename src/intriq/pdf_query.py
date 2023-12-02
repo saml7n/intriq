@@ -21,8 +21,7 @@ import nltk
 import fitz
 import pandas as pd
 
-from fpdf import FPDF
-from intriq.table_representation import table_to_docs
+from reportlab.platypus import SimpleDocTemplate, Table
 
 main.load_dotenv()
 _PARTITION_STRATEGY = 'hi_res'
@@ -53,24 +52,20 @@ def clear_submit():
     st.session_state["submit"] = False
 
 
-def create_pdf_from_excel(excel_file):
-    df = pd.read_excel(excel_file)
-
-    # Initialize FPDF instance
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    # Add content to the PDF
-    for index, row in df.iterrows():
-        for col in df.columns:
-            pdf.cell(40, 10, f"{row[col]}", border=1)
-        pdf.ln()
-
-    # Create a temporary PDF file
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmpfile:
-        pdf.output(tmpfile.name)
-        return tmpfile.name
+def _extract_tables(pdf_file, extraction_file):
+    for page in pdf_file:
+        tabls = page.find_tables()
+        for i, tabl in enumerate(tabls):
+            logger.info(f'Table {i} column names: {tabl.header.names}')
+            tabl_df = tabl.to_pandas()
+            tabl_df = tabl_df.replace('\n', ' ', regex=True)
+            for index, row in tabl_df.iterrows():
+                row_str = ''
+                for col in tabl_df.columns:
+                    row_str += f'{col}: {row[col]}, '
+                formatted = row_str[:-2]
+                logger.info(formatted)
+                extraction_file.write(formatted + "\n")
 
 
 # drop files here
@@ -93,32 +88,19 @@ if uploaded_files:
             ext = os.path.splitext(uploaded_file.name)[1][1:].lower()
         except:
             ext = uploaded_file.split(".")[-1]
-        if ext.lower() not in ['xlsx', 'xls']:
-            logger.warning('not an excel file. Skipping')
+        if ext.lower() not in ['pdf']:
+            logger.warning('not a PDF. Skipping')
             continue
-        pdf_file_name = create_pdf_from_excel(uploaded_file)
-        pdf_file = fitz.open(pdf_file_name)
-        page = pdf_file[0]
-        # for page in pdf_file:
-        tabls = page.find_tables()
-        for i, tabl in enumerate(tabls):
-            logger.info(f'Table {i} column names: {tabl.header.names}')
-        tabl_df = tabl[0].to_pandas()
-        tabl_df = tabl_df.replace('\n', ' ', regex=True)
-
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            for index, row in tabl_df.interrows():
-                row_str = ''
-                for col in tabl_df.columns:
-                    row_str += f'{col}: {row[col]}'
-                formatted = row_str[:-2]
-                logger.info(formatted)
-                tmp_file.write(formatted)
-
-        loader = TextLoader(
-            tmp_file.name,
-            # encoding='utf-8'
-        )
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            tmp_file.write(uploaded_file.getvalue())
+            tmp_file_path = tmp_file.name
+            pdf_file = fitz.open(tmp_file_path)
+        with tempfile.NamedTemporaryFile(mode='w') as extraction_file:
+            _extract_tables(pdf_file, extraction_file)
+            loader = TextLoader(
+                extraction_file.name,
+                encoding='utf-8'
+            )
         docs = loader.load()
         text_splitter = CharacterTextSplitter(
             chunk_size=1000, chunk_overlap=200
@@ -172,7 +154,7 @@ if prompt := st.chat_input(placeholder="What is this data about?"):
         st_cb = StreamlitCallbackHandler(
             st.container(), expand_new_thoughts=False)
         # docs = db.similarity_search(prompt)
-        response = qa_chain.run(
+        response = qa_chain(
             {'query': prompt},
             callbacks=[st_cb]
         )
