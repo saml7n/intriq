@@ -1,11 +1,14 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
+import numpy as np
 from streamlit_agraph import Node as stNode
 import streamlit as st
 import time
 import random
 from loguru import logger
+import plotly.express as px
+import pandas as pd
 
 from nodes_and_edges import EDGES, NODES, Mode
 
@@ -63,6 +66,7 @@ def display_loading_bar():
 
     time.sleep(1)
     my_bar.empty()
+    return True
 
 
 def generate_random_numbers_summing_to_100(N):
@@ -75,3 +79,43 @@ def generate_random_numbers_summing_to_100(N):
 
     # Calculate the differences between successive numbers
     return [random_numbers[i+1] - random_numbers[i] for i in range(N)]
+
+
+@st.cache_data(ttl=60*60*24)
+def generate_performance_numbers(categories, option):
+    performance_data = {}
+    for category in categories:
+        monthly_increases = []
+        # Starting with a small positive value
+        last_increase = random.uniform(0, 5)
+        for _ in range(12):
+            # Ensuring subsequent values are correlated with the previous ones
+            # Random change to introduce some variation
+            change = random.uniform(-3, 3)
+            # Limiting the range between -5% to 15%
+            next_increase = max(min(last_increase + change, 15), -5)
+            monthly_increases.append(round(next_increase, 2))
+            last_increase = next_increase
+
+        performance_data[category] = monthly_increases
+
+    return performance_data
+
+
+def get_node_labels_from_ids(node_ids):
+    return [n.node_data.label for n in NODES if n.node_data.id in node_ids]
+
+
+def generate_color_map(kpi_list):
+    colors = px.colors.qualitative.Plotly  # Or any other color palette you prefer
+    return {kpi: colors[i % len(colors)] for i, kpi in enumerate(kpi_list)}
+
+# Dummy data for demonstration purposes
+
+
+def get_sample_performance_data():
+    return pd.DataFrame({
+        "Date": pd.date_range(start='2021-01-01', periods=30, freq='D'),
+        "Operational KPI": np.random.randint(70, 100, 30),
+        "Financial Metric": np.random.randint(200000, 300000, 30),
+    })
