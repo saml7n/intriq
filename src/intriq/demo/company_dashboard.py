@@ -1,9 +1,10 @@
+import time
 import pandas as pd
 import streamlit as st
 from loguru import logger
 from chat import display_chatbot
 from nodes_and_edges import EDGES, NODES
-from utils import display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges, get_sample_performance_data
+from utils import display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges
 from streamlit_option_menu import option_menu
 from streamlit_agraph import agraph, Config
 import plotly.express as px
@@ -64,9 +65,9 @@ def add_new_data_source():
         )
         if uploaded_file:
             logger.info("Files uploaded successfully!")
+            with st.spinner("Uploading data..."):
+                time.sleep(3)
             st.success("Files uploaded successfully!")
-            display_loading_bar()
-            st.button("Rerun analysis")
             st.session_state['data_sources'][uploaded_file.name] = 'file-earmark'
 
 
@@ -163,14 +164,23 @@ def display_vci_details(vci_data):
     col3.metric("Progress", vci_data["Progress"], "🚀")
 
     # Sample performance data
-    performance_data = get_sample_performance_data()
+    performance_df = pd.DataFrame(
+        generate_performance_numbers(
+            ['Operational KPI 1', 'Operational KPI 2',
+                'Operational KPI 3', 'Financial Metric'],
+            ''
+        ),
+        index=pd.date_range(
+            '2022-12-01', periods=12, freq='M'
+        ),
+    )
+    performance_df.index.name = 'Date'
 
     # Creating a graph to show performance with Plotly Express
-    fig = px.line(performance_data, x='Date')
-    fig.add_scatter(
-        x=performance_data['Date'], y=performance_data['Operational KPI'], mode='lines', name='Operational KPI')
-    fig.add_scatter(
-        x=performance_data['Date'], y=performance_data['Financial Metric'], mode='lines', name='Financial Metric')
+    fig = px.line(
+        performance_df,
+        labels={'value': f'% improvement'},
+    )
     fig.update_layout(plot_bgcolor='rgba(0,0,0,0)',
                       xaxis=dict(showgrid=False),
                       yaxis=dict(showgrid=False))
@@ -294,7 +304,8 @@ def identify_value_levers(selected_node_label, connected_node_labels):
 
     if st.session_state['show_value_levers']:
         # Example data - replace with real data
-        example_data = [
+        example_data = {
+            'Revised sales strategy':
             {
                 "Department": "Sales",
                 "Ease of Implementation": "Medium",
@@ -302,6 +313,7 @@ def identify_value_levers(selected_node_label, connected_node_labels):
                 "Timeframe": "6 months",
                 "Description": "Revise the sales strategy to focus on high-margin products. This includes retraining the sales team, revising sales scripts, and targeting more profitable market segments. Expected to increase sales conversion rates by 15%."
             },
+            'Streamline logistics':
             {
                 "Department": "Operations",
                 "Ease of Implementation": "High",
@@ -309,6 +321,7 @@ def identify_value_levers(selected_node_label, connected_node_labels):
                 "Timeframe": "3 months",
                 "Description": "Implement a lean management system in the logistics department to streamline operations. This will involve adopting just-in-time inventory practices and automating parts of the supply chain, aiming to reduce delivery times by 30%."
             },
+            'New marketing campaign':
             {
                 "Department": "Marketing",
                 "Ease of Implementation": "Low",
@@ -316,11 +329,12 @@ def identify_value_levers(selected_node_label, connected_node_labels):
                 "Timeframe": "1 month",
                 "Description": "Launch a targeted digital marketing campaign focusing on retargeting previous customers and engaging new leads through social media. Utilizing data analytics for precise targeting, this campaign aims to boost customer engagement rates by 25%."
             }
-        ]
+        }
 
 # Display in a grid
-        for index, data in enumerate(example_data):
+        for index, (name, data) in enumerate(example_data.items()):
             with st.container():
+                st.subheader(f"{index+1}. {name}")
                 cols = st.columns([1, 2, 1, 2, 1])
                 with cols[1]:
                     st.markdown(f"**Department:**\n{data['Department']}")
