@@ -50,6 +50,7 @@ def main():
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = 'upload_data'
         st.session_state['data_sources'] = {'Sage': 'cash-coin'}
+        st.session_state['show_value_levers'] = False
         st.session_state['selected_company'] = None
         st.session_state["messages"] = [
             {"role": "assistant", "content": "How can I help you?"}]

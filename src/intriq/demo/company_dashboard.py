@@ -290,7 +290,9 @@ def identify_value_levers(selected_node_label, connected_node_labels):
     if st.button('Identify Value Levers'):
         display_loading_bar()
         st.write('Analysis complete!')
+        st.session_state['show_value_levers'] = True
 
+    if st.session_state['show_value_levers']:
         # Example data - replace with real data
         example_data = [
             {
@@ -335,7 +337,9 @@ def identify_value_levers(selected_node_label, connected_node_labels):
 
                 add_button = st.button(
                     f"Add '{data['Department']}' Lever", key=f"add_button_{index}")
+                logger.info(f"Button is added {add_button}")
                 if add_button:
+                    logger.info(f"Button is clicked")
                     add_to_value_levers_list(data)
             st.markdown("---")  # Separator
 
@@ -351,3 +355,4 @@ def add_to_value_levers_list(value_lever):
         st.session_state['value_levers'] = []
     st.session_state['value_levers'].append(value_lever)
     st.success('Value Lever added to the list!')
+    logger.info(f"Session state value levers: {st.session_state['value_levers']}")
