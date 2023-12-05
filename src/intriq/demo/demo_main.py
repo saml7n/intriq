@@ -72,8 +72,16 @@ def overview_dashboard():
         'Select metric',
         ('EBITDA', 'Costs of Goods Sold', 'Revenue')
     )
-    store_names = ['Fortnum & Mason', 'Lakeland', 'Boux Avenue',
-                   'Crew Clothing', 'Paperchase', 'Whistles', 'Hobbs London', 'Clarks']
+    store_names = [
+        'Fortnum & Mason',
+        'Lakeland',
+        'Boux Avenue',
+        'Crew Clothing',
+        'Paperchase',
+        'Whistles',
+        'Hobbs London',
+        'Clarks'
+    ]
     graph_df = pd.DataFrame(
         generate_performance_numbers(
             store_names, option

@@ -109,13 +109,3 @@ def get_node_labels_from_ids(node_ids):
 def generate_color_map(kpi_list):
     colors = px.colors.qualitative.Plotly  # Or any other color palette you prefer
     return {kpi: colors[i % len(colors)] for i, kpi in enumerate(kpi_list)}
-
-# Dummy data for demonstration purposes
-
-
-def get_sample_performance_data():
-    return pd.DataFrame({
-        "Date": pd.date_range(start='2021-01-01', periods=30, freq='D'),
-        "Operational KPI": np.random.randint(70, 100, 30),
-        "Financial Metric": np.random.randint(200000, 300000, 30),
-    })
