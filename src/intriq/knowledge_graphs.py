@@ -1,3 +1,4 @@
+import random
 import ssl
 import streamlit as st
 from dotenv import main
@@ -5,8 +6,9 @@ import nltk
 from loguru import logger
 from streamlit_agraph import agraph, Config
 import plotly.express as px
+from nodes_and_edges import EDGES, NODES
 
-from knowledge_graphs_utils import display_loading_bar, get_nodes_and_edges
+from knowledge_graphs_utils import display_loading_bar, generate_random_numbers_summing_to_100, get_nodes_and_edges
 
 
 main.load_dotenv()
@@ -33,6 +35,8 @@ def clear_submit():
     """
     st.session_state["submit"] = False
 
+def main_dashboard():
+    
 
 def main():
     st.set_page_config(
@@ -44,6 +48,8 @@ def main():
     # Initialize 'current_page' in session state if not already set
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = 'upload_data'
+
+    main_dashboard()
 
     # Sidebar Menu
     st.sidebar.title("Navigation")
@@ -141,10 +147,13 @@ def view_graph_section():
                     physics={'enabled': False})
 
     # Render the graph
-    agraph(nodes=nodes,
-           edges=edges,
-           config=config)
-    draw_pie_chart(financial_kpi_options[0])
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        selected_node_id = agraph(nodes=nodes,
+                                  edges=edges,
+                                  config=config)
+    with col2:
+        draw_pie_chart(selected_node_id)
 
 
 def data_explorer_section():
@@ -159,18 +168,18 @@ def control_center_section():
     # ... (implement analysis and visualization logic)
 
 
-def draw_pie_chart(financial_kpi):
+def draw_pie_chart(selected_node_id):
+    logger.info(f"Selected node id: {selected_node_id}")
+    connected_node_ids = [e.source for e in EDGES if e.to == selected_node_id]
+    connected_node_labels = [
+        n.node_data.label for n in NODES if n.node_data.id in connected_node_ids]
+
     data = {
-        'Category': [
-            'Category A',
-            'Category B',
-            'Category C',
-            'Category D'
-        ],
-        'Values': [15, 30, 45, 10]
+        'Operational Factors': connected_node_labels,
+        'Values': generate_random_numbers_summing_to_100(len(connected_node_labels))
     }
 
-    fig = px.pie(data, names='Category', values='Values')
+    fig = px.pie(data, names='Operational Factors', values='Values')
 
     # Display the pie chart
     st.plotly_chart(fig)
