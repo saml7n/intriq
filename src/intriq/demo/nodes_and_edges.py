@@ -31,12 +31,12 @@ ok_node_styling_dict = dict(
 
 fk_node_styling_dict = dict(
     size=25,
-    shape="circle",
+    shape="diamond",
     color={
         'border': 'lightgray', 'background': 'mediumseagreen',
         'highlight': {'background': 'lightgreen', 'border': 'gray'}},
     borderWidth=2,
-    font={'color': 'white', 'face': 'Courier New', 'size': 12},
+    font={'color': 'black', 'face': 'Courier New', 'size': 12},
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
 )
