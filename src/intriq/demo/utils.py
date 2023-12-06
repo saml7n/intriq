@@ -141,3 +141,11 @@ def get_node_labels_from_ids(node_ids):
 def generate_color_map(kpi_list):
     colors = px.colors.qualitative.Plotly  # Or any other color palette you prefer
     return {kpi: colors[i % len(colors)] for i, kpi in enumerate(kpi_list)}
+
+
+def wrap_in_column(func):
+    def wrapper(*args, **kwargs):
+        col1, col2, col3 = st.columns([1, 6, 1])
+        with col2:
+            func(*args, **kwargs)
+    return wrapper

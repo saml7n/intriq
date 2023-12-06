@@ -4,8 +4,10 @@ import streamlit as st
 from loguru import logger
 import time
 from data_dict import PORTFOLIO_COMPANIES
+from utils import wrap_in_column
 
 
+@wrap_in_column
 def display_connection_dashboard():
     st.selectbox('Select Company to upload data', PORTFOLIO_COMPANIES)
     ds_selection = option_menu(

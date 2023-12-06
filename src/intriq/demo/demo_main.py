@@ -13,7 +13,7 @@ from identify_dashboard import display_analysis_dashboard
 from nodes_and_edges import EDGES, NODES
 from streamlit_option_menu import option_menu
 from data_connection_dashboard import display_connection_dashboard
-from utils import display_loading_bar, generate_random_numbers_summing_to_100, generate_performance_numbers, get_nodes_and_edges
+from utils import display_loading_bar, generate_random_numbers_summing_to_100, generate_performance_numbers, get_nodes_and_edges, wrap_in_column
 from tracking_dashboard import display_tracking_dashboard
 
 
@@ -89,6 +89,7 @@ def main():
         display_tracking_dashboard()
 
 
+@wrap_in_column
 def overview_dashboard():
     # Header
     st.title('Welcome to intriq')
@@ -114,7 +115,7 @@ def overview_dashboard():
     )
 
     # Display the line chart
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
     display_kpi_summary()

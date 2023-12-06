@@ -2,11 +2,11 @@ import pandas as pd
 import streamlit as st
 from loguru import logger
 from nodes_and_edges import EDGES
-from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges
+from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges, wrap_in_column
 from streamlit_agraph import agraph, Config
 import plotly.express as px
 
-
+@wrap_in_column
 def display_analysis_dashboard():
     st.subheader("Visualise your Operations")
     if st.session_state['new_data_added']:
