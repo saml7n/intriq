@@ -45,7 +45,8 @@ def clear_submit():
 def main():
     st.set_page_config(
         page_title="intriq data diagnostics",
-        page_icon="🤖"
+        page_icon="🤖",
+        layout='wide'
     )
 
     # Initialize 'current_page' in session state if not already set

@@ -9,7 +9,7 @@ from utils import wrap_in_column
 
 @wrap_in_column
 def display_connection_dashboard():
-    col1, col2, = st.columns([1, 4])
+    col1, col2, = st.columns([2, 4])
     with col1:
         st.selectbox('Select Company', PORTFOLIO_COMPANIES)
     ds_selection = option_menu(

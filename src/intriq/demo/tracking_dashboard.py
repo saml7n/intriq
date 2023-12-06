@@ -9,7 +9,7 @@ from utils import Initiative, generate_performance_numbers
 
 def display_tracking_dashboard():
     st.header("Value Creation Tracking")
-    col1, col2, = st.columns([1, 5])
+    col1, col2, = st.columns([2, 5])
     with col1:
         st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
 
