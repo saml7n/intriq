@@ -3,11 +3,15 @@ from chat import display_chatbot
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+from data_dict import PORTFOLIO_COMPANIES
 from utils import Initiative, generate_performance_numbers
 
 
 def display_tracking_dashboard():
     st.header("Value Creation Tracking")
+    col1, col2, = st.columns([1, 5])
+    with col1:
+        st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
 
    # Use columns for layout
     col1, col2 = st.columns([3, 1])  # Adjust the ratio as needed

@@ -1,14 +1,22 @@
 import pandas as pd
 import streamlit as st
 from loguru import logger
+from data_dict import PORTFOLIO_COMPANIES
 from nodes_and_edges import EDGES
 from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges, wrap_in_column
 from streamlit_agraph import agraph, Config
 import plotly.express as px
 
+
 @wrap_in_column
 def display_analysis_dashboard():
-    st.subheader("Visualise your Operations")
+    col1, col2, = st.columns([1, 4])
+    with col1:
+        st.selectbox('Select Company', PORTFOLIO_COMPANIES)
+    st.subheader("Process Map")
+    st.write(
+        "The process map below shows the relations between operational processes and financial metrics for your company. Click on the nodes to see more information about each KPI."
+    )
     if st.session_state['new_data_added']:
         with st.form('new_data_added_form'):
             st.info(
@@ -22,27 +30,29 @@ def display_analysis_dashboard():
 
 
 def display_knowledge_graph(updated):
-    if updated:
-        st.info('New value levers have been identified!')
-    display_value_levers = st.toggle(
-        '🔎 Value lever view',
-        value=False,
-        key="toggle"
-    )
-    graph_display_mode = 'Highlight Value Levers' if display_value_levers else 'All Nodes'
-    financial_kpi_options = st.multiselect(
-        'Select which financial KPIs to display:',
-        [
-            'Gross Profit',
-            'Reported EBITDA',
-            'Reported Net Income',
-            'EBITDA Growth %',
-            'EBITDA Margin %',
-            'Net Sales'
-        ],
-        default='Net Sales',
-        key="financial_kpi_options"
-    )
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        st.markdown("##")
+        display_value_levers = st.toggle(
+            '🔍 Value Lever View',
+            value=False,
+            key="toggle"
+        )
+        graph_display_mode = 'Highlight Value Levers' if display_value_levers else 'All Nodes'
+    with col2:
+        financial_kpi_options = st.multiselect(
+            'Select which financial KPIs to display:',
+            [
+                'Gross Profit',
+                'Reported EBITDA',
+                'Reported Net Income',
+                'EBITDA Growth %',
+                'EBITDA Margin %',
+                'Net Sales'
+            ],
+            default='Net Sales',
+            key="financial_kpi_options"
+        )
 
     # Define or get your nodes and edges based on the selected mode
     nodes, edges = get_nodes_and_edges(
@@ -149,7 +159,6 @@ def display_kpi_performance(
 
 
 def display_value_lever_suggestions():
-
     # Example data - replace with real data
     initiatives = [
         Initiative(
@@ -181,8 +190,11 @@ def display_value_lever_suggestions():
         )
     ]
 
-    st.markdown(
-        '<h1 style="color: Red;">New Opportunities</h3>', unsafe_allow_html=True)
+    st.markdown("""
+            <div style="padding: 1rem; background-color: #ffcccc; border-radius: 0.5rem; text-align: center;">
+                <h4 style="margin: 0; color: #cc0000;">⚠️ New Value Levers Identified! ⚠️</h4>
+            </div>
+            """, unsafe_allow_html=True)
 
     for i, initiative in enumerate(initiatives):
         with st.container():

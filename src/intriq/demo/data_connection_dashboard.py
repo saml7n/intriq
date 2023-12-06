@@ -9,7 +9,9 @@ from utils import wrap_in_column
 
 @wrap_in_column
 def display_connection_dashboard():
-    st.selectbox('Select Company to upload data', PORTFOLIO_COMPANIES)
+    col1, col2, = st.columns([1, 4])
+    with col1:
+        st.selectbox('Select Company', PORTFOLIO_COMPANIES)
     ds_selection = option_menu(
         'Connect your Data Sources', [
             *list(st.session_state['data_sources'].keys()), 'Add New'
