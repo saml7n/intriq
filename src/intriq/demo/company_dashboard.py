@@ -121,8 +121,8 @@ def view_graph_section():
                               config=config)
     if selected_node_id:
         selected_node_label = get_node_labels_from_ids([selected_node_id])[0]
-        with st.expander(f'View {selected_node_label} details'):
-            display_kpi_details(selected_node_id)
+        st.subheader(f'Details for: {selected_node_label}')
+        display_kpi_details(selected_node_id)
 
 
 def control_center_section():
@@ -217,6 +217,7 @@ def display_vci_details(vci_data):
 
 def display_kpi_details(selected_node_id):
     logger.info(f"Selected node id: {selected_node_id}")
+    st.session_state['show_value_levers'] = False
     selected_node_label = get_node_labels_from_ids([selected_node_id])[0]
 
     # KPI Contributions Section
@@ -297,7 +298,8 @@ def display_kpi_performance(
 
 
 def identify_value_levers(selected_node_label, connected_node_labels):
-    if st.button('Identify Value Levers'):
+    st.subheader("Value Levers Identification")
+    if not st.session_state['show_value_levers'] and st.button(label='Start automatic Identification', type='primary'):
         display_loading_bar()
         st.write('Analysis complete!')
         st.session_state['show_value_levers'] = True
@@ -350,10 +352,8 @@ def identify_value_levers(selected_node_label, connected_node_labels):
                 st.markdown(f"**Description:**\n{data['Description']}")
 
                 add_button = st.button(
-                    f"Add '{data['Department']}' Lever", key=f"add_button_{index}")
-                logger.info(f"Button is added {add_button}")
+                    f"Add '{data['Department']}' Lever", key=f"add_button_{index}", type='secondary')
                 if add_button:
-                    logger.info(f"Button is clicked")
                     add_to_value_levers_list(data)
             st.markdown("---")  # Separator
 
@@ -369,4 +369,3 @@ def add_to_value_levers_list(value_lever):
         st.session_state['value_levers'] = []
     st.session_state['value_levers'].append(value_lever)
     st.success('Value Lever added to the list!')
-    logger.info(f"Session state value levers: {st.session_state['value_levers']}")

@@ -110,14 +110,14 @@ def overview_dashboard():
         col1, col2, col3, col4 = st.columns(4)
         for i, company in enumerate(store_names[:4]):
             with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True):
+                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary' ):
                     st.session_state['selected_company'] = company
     # row 2
     with st.container():
         col5, col6, col7, col8 = st.columns(4)
         for i, company in enumerate(store_names[4:], start=4):
             with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True):
+                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
                     st.session_state['selected_company'] = company
 
     # Show company dashboard if company clicked
