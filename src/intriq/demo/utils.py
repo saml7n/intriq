@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import Field, asdict, dataclass, field
 from enum import Enum
 from typing import List
 import numpy as np
@@ -10,15 +10,47 @@ from loguru import logger
 import plotly.express as px
 import pandas as pd
 
-from nodes_and_edges import EDGES, NODES, Mode
+from nodes_and_edges import EDGES, NODES, NODES_TRUNCATED, Mode
+
+# TODO: Split into 3 classes
 
 
-def get_nodes_and_edges(mode, financial_kpi_options=None):
+@dataclass
+class Initiative:
+    name: str
+    department: str
+    timeframe: str
+    kpis: List[str]
+
+    # for in progress initiatives
+    status: str = 'Not Started'
+    progress: str = '0%'
+    status_color: str = '⚪️'
+
+    # from suggestion panel
+    ease_of_implementation: str = None
+    impact_on_profitability: str = None
+    description: str = None
+
+    def to_dict(self,):
+        # Converts the data class to a dictionary for the purpose of filling the tracking table. Very hacky!
+        return {
+            'Initiative Name': self.name,
+            'Department': self.department,
+            'Timeframe': self.timeframe,
+            'Current Status': self.status,
+            'Progress': self.progress,
+            'RAG Status': self.status_color,
+        }
+
+
+def get_nodes_and_edges(mode, financial_kpi_options=None, short_list=True):
     mode = Mode(mode)
 
     # Incredibly hacky way of doing this, but it works for now
     return_nodes = []
-    for node in NODES:
+    nodes = NODES_TRUNCATED if short_list else NODES
+    for node in nodes:
         if 'FK' in node.node_data.id:
             if node.node_data.label not in financial_kpi_options:
                 continue
