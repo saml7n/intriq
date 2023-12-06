@@ -361,3 +361,5 @@ EDGES.append(Edge(source="OK7",  # Employee Productivity
                   target="FK3",  # Reported EBITDA
                   **operational_lever_edge_styling_dict)
              )
+
+NODES_TRUNCATED = NODES[1:2] + NODES[7:11]
