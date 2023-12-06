@@ -103,9 +103,32 @@ def display_vci_details(vci_data):
         }
         for kpi, status in kpis.items():
             st.write(f"{kpi}: {status}")
+        col1, col2, col3 = st.columns([3, 3, 18])
+        with col1:
+            st.button('➕ Add New')
+        with col2:
+            st.button('🔧 Edit')
 
     with st.expander("💬 Ask the Chatbot"):
         display_chatbot()
+
+     # Tracking Expander
+    with st.expander("📊 Tracking Progress"):
+        st.write("### How Progress is Tracked")
+        st.write(f"""
+            The progress of the '{vci_data['Initiative Name']}' initiative is tracked using specific operational data sources and key metrics. Here are some examples:
+
+            - **Sales Data Source:** Tracking the number of new leads and conversion rates. This data helps in assessing the effectiveness of the 'Optimize Sales Funnel' initiative.
+            - **Operational Efficiency Metrics:** Utilizing data from logistics systems to measure improvements in delivery times and cost savings.
+            - **Customer Feedback:** Analyzing customer feedback data to gauge the impact of the 'New Marketing Campaign' on customer satisfaction.
+
+            **Link a Data Source:**
+            - Connect relevant data sources to continuously monitor and analyze the performance of this initiative.
+        """)
+
+        if st.button("Link New Data Source", key=f"link_data_{vci_data['Initiative Name']}"):
+            st.write("Link data source functionality goes here.")
+            # Implement functionality to link a data source
 
     # Links to supporting documents with icons
     with st.expander("📄 Supporting Documents"):
