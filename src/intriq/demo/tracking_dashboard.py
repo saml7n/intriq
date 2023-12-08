@@ -12,52 +12,48 @@ def display_tracking_dashboard():
     col1, col2, = st.columns([2, 5])
     with col1:
         st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
-
-   # Use columns for layout
-    col1, col2 = st.columns([3, 1])  # Adjust the ratio as needed
-
+    
+    st.subheader("Your Initiatives")
+    col1, col2, colx = st.columns([3, 3, 10])
+    # Add any quick action buttons or links here
     with col1:
-        st.subheader("Your Initiatives")
-
-        # Example in-progress initiatives
-        in_progress_initiatives = [
-            Initiative("Optimize Sales Funnel", "Sales", "6 months", [
-                       "Sales Growth", "Customer Retention"], "On Track", "40%", "🟢"),
-            Initiative("Streamline Logistics", "Operations", "3 months", [
-                       "Operational Efficiency", "Logistics Cost Reduction"], "Minor Delays", "25%", "🟠"),
-            Initiative("New Marketing Campaign", "Marketing", "2 months", [
-                       "Market Reach", "Lead Generation"], "Behind Schedule", "10%", "🔴")
-        ] + st.session_state.get('initiatives', [])
-
-        # Convert data class objects to DataFrame for AgGrid
-        data = [initiative.to_dict()
-                for initiative in in_progress_initiatives]
-        df = pd.DataFrame(data)
-
-        # Customize AgGrid
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_selection('single')  # Enable single row selection
-        grid_options = gb.build()
-
-        # Customizing the grid's appearance
-        grid_response = AgGrid(
-            df,
-            gridOptions=grid_options,
-            columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS,
-            theme=AgGridTheme.ALPINE,
-            fit_columns_on_grid_load=True)
-        # Handling selection
-        selected = grid_response['selected_rows']
-        if selected:
-            selected_row_data = selected[0]  # Assuming single row selection
-            display_vci_details(selected_row_data)
-
-    with col2:
-        st.subheader("Quick Actions")
-        st.markdown("#")
-        # Add any quick action buttons or links here
         st.button("➕ Add New Initiative", use_container_width=True)
+    with col2:
         st.button("📄 Generate Report", use_container_width=True)
+
+    # Example in-progress initiatives
+    in_progress_initiatives = [
+        Initiative("Optimize Sales Funnel", "Sales", "6 months", [
+                    "Sales Growth", "Customer Retention"], "On Track", "40%", "🟢"),
+        Initiative("Streamline Logistics", "Operations", "3 months", [
+                    "Operational Efficiency", "Logistics Cost Reduction"], "Minor Delays", "25%", "🟠"),
+        Initiative("New Marketing Campaign", "Marketing", "2 months", [
+                    "Market Reach", "Lead Generation"], "Behind Schedule", "10%", "🔴")
+    ] + st.session_state.get('initiatives', [])
+
+    # Convert data class objects to DataFrame for AgGrid
+    data = [initiative.to_dict()
+            for initiative in in_progress_initiatives]
+    df = pd.DataFrame(data)
+
+    # Customize AgGrid
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_selection('single')  # Enable single row selection
+    grid_options = gb.build()
+
+    # Customizing the grid's appearance
+    grid_response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS,
+        theme=AgGridTheme.ALPINE,
+        fit_columns_on_grid_load=True)
+    # Handling selection
+    selected = grid_response['selected_rows']
+    if selected:
+        selected_row_data = selected[0]  # Assuming single row selection
+        display_vci_details(selected_row_data)
+    
 
 
 def display_vci_details(vci_data):

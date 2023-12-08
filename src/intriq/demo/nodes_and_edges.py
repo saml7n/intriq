@@ -19,12 +19,12 @@ NODES = []
 EDGES = []
 ok_node_styling_dict = dict(
     size=25,
-    shape="circle",
+    shape="dot",
     color={
-        'border': 'lightgray', 'background': 'dodgerblue',
-        'highlight': {'background': 'lightskyblue', 'border': 'gray'}},
+        'border': 'lightgray', 'background': '#10a3fc',
+        'highlight': {'background': '#83c9ff', 'border': '#10a3fc'}},
     borderWidth=2,
-    font={'color': 'white', 'face': 'Courier New', 'size': 12},
+    font={'color': '#212121', 'face': 'Helvetica', 'size': 16},
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
 )
@@ -33,33 +33,33 @@ fk_node_styling_dict = dict(
     size=25,
     shape="diamond",
     color={
-        'border': 'lightgray', 'background': 'mediumseagreen',
-        'highlight': {'background': 'lightgreen', 'border': 'gray'}},
+        'border': '#fff', 'background': '#00C853', 'weight': 'light',
+        'highlight': {'background': '#00E676', 'border': '#00C853'}},
     borderWidth=2,
-    font={'color': 'black', 'face': 'Courier New', 'size': 12},
+    font={'color': '#212121', 'face': 'Helvetica', 'size': 16},
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
 )
 
 lever_node_styling_dict = dict(
     size=25,
-    shape="circle",
+    shape="square",
     color={
-        'border': 'red',  # Red border for emphasis
-        'background': 'dodgerblue',  # Standard operational node background
-        'highlight': {'background': 'lightskyblue', 'border': 'red'}},  # Highlight changes
+        'border': '#fff',  # Red border for emphasis
+        'background': '#ff4b4b',  # Standard operational node background
+        'highlight': {'background': '#fa9999', 'border': '#ff4b4b'}},  # Highlight changes
     borderWidth=4,  # Thicker and brighter border
-    font={'color': 'white', 'face': 'Helvetica',
-          'size': 14, 'bold': True},  # Font adjustments
+    font={'color': '#212121', 'face': 'Helvetica',
+          'size': 16, 'bold': True},  # Font adjustments
     shadow={'enabled': True,
-            'color': 'rgba(0, 0, 0, 0.3)', 'size': 5, 'x': 3, 'y': 3},
+            'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
     title="Value Lever Node"  # Tooltip on hover
 )
 
 edge_styling_dict = dict(
     arrows='to',
     smooth={'enabled': True, 'type': 'dynamic'},
-    font={'color': 'black', 'face': 'Arial', 'size': 10},
+    font={'color': '#212121', 'face': 'Helvetica', 'size': 10},
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
     width=2,
@@ -70,10 +70,10 @@ edge_styling_dict = dict(
 )
 
 operational_lever_edge_styling_dict = dict(
-    color='darkred',  # Distinctive color for operational lever edge
+    color='#ff4b4b',  # Distinctive color for operational lever edge
     arrows='to',
     smooth={'enabled': True, 'type': 'dynamic'},
-    font={'color': 'darkred', 'face': 'Arial',
+    font={'color': '#ff4b4b', 'face': 'Helvetica',
           'size': 12, 'bold': True},  # Bigger, bolder text
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
