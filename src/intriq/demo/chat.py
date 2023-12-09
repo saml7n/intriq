@@ -7,10 +7,9 @@ import streamlit as st
 
 def get_chatbot_response(query):
     dummy_responses = {
-        "current sales status": "Sales are currently 15% above the forecast for this quarter.",
-        "operational efficiency": "Operational efficiency has improved by 10% since the last assessment.",
-        "marketing campaign performance": "The latest marketing campaign has seen a 20% increase in engagement.",
-        "default": "I'm sorry, I don't have information on that topic."
+        "current inventory accuracy": "Inventory accuracy currently stands at 98%, showing an improvement following the digital transformation initiative.",
+        "stock turnover rate": "The stock turnover rate has increased by 12% since the implementation of the new inventory management system.",
+        "progress on digital transformation": "The Digital Transformation for Inventory Management initiative is approximately 30% complete, on track with the projected timeline."
     }
     return random.choice(list(dummy_responses.values()))
 

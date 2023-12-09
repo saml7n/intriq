@@ -15,8 +15,6 @@ class Node:
     modes: list[Mode] = field(default_factory=list)
 
 
-NODES = []
-EDGES = []
 ok_node_styling_dict = dict(
     size=25,
     shape="circle",
@@ -84,255 +82,54 @@ operational_lever_edge_styling_dict = dict(
     title="Operational Lever Connection"  # Tooltip on hover
 )
 
+FINANCIAL_METRICS = ['Revenue', 'Gross Margin', 'EBITDA']
+NODES = []
 # Financial nodes
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK1",
-            label="Net Sales",
-            **fk_node_styling_dict
-        ),
-        modes=[
-            Mode.FINANCIAL_KPIS_ONLY,
-            Mode.HIGHLIGHT_VALUE_LEVERS]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK2",
-            label="Gross Profit",
-            **fk_node_styling_dict
-        ),
-        modes=[Mode.FINANCIAL_KPIS_ONLY]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK3",
-            label="Reported EBITDA",
-            **fk_node_styling_dict
-        ),
-        modes=[Mode.FINANCIAL_KPIS_ONLY]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK4",
-            label="Reported Net Income",
-            **fk_node_styling_dict
-        ),
-        modes=[Mode.FINANCIAL_KPIS_ONLY]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK5",
-            label="EBITDA Growth %",
-            **fk_node_styling_dict
-        ),
-        modes=[Mode.FINANCIAL_KPIS_ONLY]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="FK6",
-            label="EBITDA Margin %",
-            **fk_node_styling_dict
-        ),
-        modes=[Mode.FINANCIAL_KPIS_ONLY]
-    )
-)
+for i, label in enumerate(FINANCIAL_METRICS, start=1):
+    NODES.append(Node(node_data=stNode(
+        id=f"FK{i}", label=label, **fk_node_styling_dict)))
 
 # Operational nodes
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK1",
-            label="Visitors",
-            **ok_node_styling_dict
-        )
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK2",
-            label="Ticketing percap",
-            **ok_node_styling_dict)
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK3",
-            label="In-Park Revenue",
-            **ok_node_styling_dict)
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK4",
-            label="Safety Incidents",
-            **ok_node_styling_dict
-        ),
-        modes=[Mode.HIGHLIGHT_VALUE_LEVERS]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK5",
-            label="Customer Satisfaction",
-            **ok_node_styling_dict)
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK6",
-            label="Employee Productivity",
-            **lever_node_styling_dict
-        ),
-        modes=[Mode.HIGHLIGHT_VALUE_LEVERS]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK7",
-            label="Marketing Effectiveness",
-            **ok_node_styling_dict
-        )
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK8",
-            label="Season Pass Sales",
-            **ok_node_styling_dict
-        ),
-        modes=[Mode.HIGHLIGHT_VALUE_LEVERS]
-    )
-)
-NODES.append(
-    Node(
-        node_data=stNode(
-            id="OK9",
-            label="Customer Loyalty",
-            **ok_node_styling_dict
-        )
-    )
-)
+OPERATIONAL_METRICS = [
+    "Inventory \nTurnover", "Supply\nChain\nEfficiency", "Customer\nFootfall",
+    "Online\nSales Growth", "Product\nReturn Rate", "Employee\nSatisfaction",
+    "Marketing\nROI", "Customer\nLifetime\nValue", "Retail\nSpace\nUtilization",
+    "Seasonal\nSales\nPerformance"
+]
 
-EDGES.append(Edge(source="OK1",
-                  label="Increases",
-                  target="FK2",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-EDGES.append(Edge(source="OK2",
-                  label="Increases",
-                  target="FK2",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-# Visitor impact on sales
-EDGES.append(Edge(source="OK1",
-                  label="Increases",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict
+for i, label in enumerate(OPERATIONAL_METRICS, start=1):
+    NODES.append(Node(node_data=stNode(
+        id=f"OK{i}", label=label, **ok_node_styling_dict)))
 
-                  )
-             )
-# Ticketing percap impact on Net Sales
-EDGES.append(Edge(source="OK2",
-                  label="Impacts",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-# In-Park Revenue impact on Net Sales
-EDGES.append(Edge(source="OK3",
-                  label="Boosts",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-# Safety Incidents impact on Customer Satisfaction
-EDGES.append(Edge(source="OK4",
-                  label="Negatively affects",
-                  target="OK6",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-# Customer Satisfaction impact on Net Sales
-EDGES.append(Edge(source="OK6",
-                  label="Increases",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict
-                  )
-             )
-# Employee Productivity impact on Reported EBITDA
-EDGES.append(Edge(source="OK7",
-                  label="Improves",
-                  target="FK3",
-                  color='gray',
-                  **edge_styling_dict))
-# Marketing Effectiveness impact on Visitors
-EDGES.append(Edge(source="OK8",
-                  label="Attracts more",
-                  target="OK1",
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK9",
-                  label="Contributes to",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK9",
-                  label="Boosts",
-                  target="OK10",
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK10",
-                  label="Enhances",
-                  target="FK2",
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK7",
-                  label="Increases",
-                  target="FK1",
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK6",  # Customer Satisfaction
-                  label="Increases",
-                  target="FK1",  # Net Sales
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK6",  # Customer Satisfaction
-                  label="Boosts",
-                  target="OK10",  # Customer Loyalty
-                  color='gray',
-                  **edge_styling_dict))
-EDGES.append(Edge(source="OK6",  # Customer Satisfaction
-                  label="Enhances",
-                  target="OK8",  # Marketing Effectiveness
-                  color='gray',
-                  **edge_styling_dict))
+# Edges
+EDGES = [
+    Edge(source="OK3", label="Impacts", target="FK1",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK4", label="Boosts", target="FK1",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK7", label="Influences", target="FK1",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK5", label="Reduces", target="FK2",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK1", label="Optimizes", target="FK2",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK2", label="Enhances", target="FK2",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK8", label="Increases", target="FK3",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK6", label="Supports", target="FK3",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK10", label="Varies", target="FK3",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK9", label="Improves", target="FK3",
+         color='gray', **edge_styling_dict),
+    # Additional edges to represent interconnections between operational KPIs
+    Edge(source="OK1", label="Influences", target="OK2",
+         color='gray', **edge_styling_dict),
+    Edge(source="OK3", label="Correlates with",
+         target="OK4", color='gray', **edge_styling_dict)
+    # Add more edges as required
+]
 
 # Example of a Feedback Loop (Customer Satisfaction to Net Sales to Marketing Effectiveness)
 EDGES.append(Edge(source="OK6",  # Customer Satisfaction
@@ -362,4 +159,38 @@ EDGES.append(Edge(source="OK7",  # Employee Productivity
                   **operational_lever_edge_styling_dict)
              )
 
-NODES_TRUNCATED = NODES[1:2] + NODES[7:11]
+feedback_loop_edges = [
+    Edge(source="OK6", label="Improves", target="FK1", color='orange',
+         **edge_styling_dict),  # Customer Satisfaction to Net Sales
+    Edge(source="FK1", label="Increases budget for", target="OK8", color='orange',
+         **edge_styling_dict),  # Net Sales to Marketing Effectiveness
+    Edge(source="OK8", label="Enhances", target="OK6", color='orange', **
+         edge_styling_dict)  # Marketing Effectiveness to Customer Satisfaction
+]
+
+# Value Lever nodes
+NODES[0].modes.append(Mode.HIGHLIGHT_VALUE_LEVERS)
+NODES[5] = Node(
+    node_data=stNode(
+        id="OK3",
+        label="Customer\nFootfall",
+        **lever_node_styling_dict
+    ),
+    modes=[Mode.HIGHLIGHT_VALUE_LEVERS],
+
+)
+NODES[6].modes.append(Mode.HIGHLIGHT_VALUE_LEVERS)
+
+# Leverage Point Edge
+leverage_point_edge = Edge(
+    source="OK3",
+    label="Significantly improves",
+    target="FK1",
+    **operational_lever_edge_styling_dict
+)  # Employee Productivity to Reported EBITDA
+
+# Append these special edges to the existing EDGES list
+EDGES.extend(feedback_loop_edges)
+EDGES.append(leverage_point_edge)
+
+NODES_TRUNCATED = NODES[:5]

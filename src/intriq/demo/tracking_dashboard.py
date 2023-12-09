@@ -21,13 +21,17 @@ def display_tracking_dashboard():
 
         # Example in-progress initiatives
         in_progress_initiatives = [
-            Initiative("Optimize Sales Funnel", "Sales", "6 months", [
-                       "Sales Growth", "Customer Retention"], "On Track", "40%", "🟢"),
-            Initiative("Streamline Logistics", "Operations", "3 months", [
-                       "Operational Efficiency", "Logistics Cost Reduction"], "Minor Delays", "25%", "🟠"),
-            Initiative("New Marketing Campaign", "Marketing", "2 months", [
-                       "Market Reach", "Lead Generation"], "Behind Schedule", "10%", "🔴")
-        ] + st.session_state.get('initiatives', [])
+            Initiative("Digital Transformation for Inventory Management", "Technology", "1 year", [
+                       "Inventory Accuracy", "Stock Turnover Rate"], "In Progress", "30%", "🟠"),
+            Initiative("Employee Training Program for Enhanced Customer Service", "Human Resources", "9 months",
+                       ["Customer Satisfaction", "Employee Skill Level"], "In Progress", "50%", "🟢"),
+            Initiative("Sustainability Initiative for Eco-Friendly Packaging", "Operations", "6 months",
+                       ["Waste Reduction", "Customer Eco-Satisfaction"], "In Progress", "40%", "🟢"),
+            Initiative("Development of a Loyalty Program", "Marketing", "8 months", [
+                       "Customer Retention Rate", "Repeat Purchase Rate"], "In Progress", "20%", "🟠"),
+            Initiative("Expansion of E-commerce Platform", "E-Commerce", "1 year",
+                       ["Online Sales Growth", "Website Traffic"], "In Progress", "35%", "🟠"),
+            Initiative("Optimization of Supply Chain Logistics", "Supply Chain", "1.5 years", ["Logistics Cost Reduction", "Delivery Time"], "In Progress", "60%", "🟢")] + st.session_state.get('initiatives', [])
 
         # Convert data class objects to DataFrame for AgGrid
         data = [initiative.to_dict()
@@ -71,8 +75,7 @@ def display_vci_details(vci_data):
     # Sample performance data
     performance_df = pd.DataFrame(
         generate_performance_numbers(
-            ['Operational KPI 1', 'Operational KPI 2',
-                'Operational KPI 3', 'Financial Metric'],
+            ['Inventory Accuracy', 'Stock Turnover Rate', 'Revenue'],
             ''
         ),
         index=pd.date_range(
@@ -95,15 +98,14 @@ def display_vci_details(vci_data):
     # More Information section
     with st.expander("🔍 More Information & KPIs"):
         st.write("### Detailed Description")
-        st.write("This section provides an in-depth look at the 'Optimize Sales Funnel' initiative, "
+        st.write(f"This section provides an in-depth look at the '{vci_data['Initiative Name']}' initiative, "
                  "including strategic importance, implementation steps, expected challenges, and long-term vision for this project.")
 
         # Display relevant KPIs with RAG status
         st.write("### Relevant KPIs and RAG Status")
         kpis = {
-            "Customer Conversion Rate": "🟢",
-            "Lead Generation": "🟠",
-            "Customer Churn Rate": "🔴"
+            "Inventory Accuracy": "🟢",
+            "Stock Turnover Rate": "🟠",
         }
         for kpi, status in kpis.items():
             st.write(f"{kpi}: {status}")
@@ -137,7 +139,7 @@ def display_vci_details(vci_data):
     # Links to supporting documents with icons
     with st.expander("📄 Supporting Documents"):
         st.markdown("""
-            - 📑 [Project Plan](#)
-            - 📊 [Budget Report](#)
-            - 📈 [Market Analysis](#)
+            - 📑 [Digital Transformation Project Plan](#)
+            - 📋 [Inventory Management System Requirements Specification](#)
+            - 📒 [Change Management and Training Guide](#)
         """)
