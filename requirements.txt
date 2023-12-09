@@ -1491,6 +1491,7 @@ sniffio==1.3.0 \
 soupsieve==2.5 \
     --hash=sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690 \
     --hash=sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7
+greenlet==3.0.1
 SQLAlchemy==2.0.23 \
     --hash=sha256:227135ef1e48165f37590b8bfc44ed7ff4c074bf04dc8d6f8e7f1c14a94aa6ca \
     --hash=sha256:31952bbc527d633b9479f5f81e8b9dfada00b91d6baba021a869095f1a97006d \
