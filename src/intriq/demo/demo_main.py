@@ -45,13 +45,15 @@ def clear_submit():
 def main():
     st.set_page_config(
         page_title="intriq data diagnostics",
-        page_icon="🤖"
+        page_icon="🤖",
+        layout='wide'
     )
 
     # Initialize 'current_page' in session state if not already set
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = 'upload_data'
         st.session_state['data_sources'] = {'Sage': 'cash-coin', 'SAP': 'gear'}
+        st.session_state['show_value_levers'] = False
         st.session_state['selected_company'] = None
         st.session_state["messages"] = [
             {"role": "assistant", "content": "How can I help you?"}]
@@ -129,14 +131,14 @@ def overview_dashboard():
         col1, col2, col3, col4 = st.columns(4)
         for i, company in enumerate(PORTFOLIO_COMPANIES[:4]):
             with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True):
+                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
                     st.session_state['selected_company'] = company
     # row 2
     with st.container():
         col5, col6, col7, col8 = st.columns(4)
         for i, company in enumerate(PORTFOLIO_COMPANIES[4:], start=4):
             with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True):
+                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
                     st.session_state['selected_company'] = company
 
 

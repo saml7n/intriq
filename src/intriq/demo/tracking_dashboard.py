@@ -9,15 +9,17 @@ from utils import Initiative, generate_performance_numbers
 
 def display_tracking_dashboard():
     st.header("Value Creation Tracking")
-    col1, col2, = st.columns([1, 5])
+    col1, col2, = st.columns([2, 5])
     with col1:
         st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
 
-   # Use columns for layout
-    col1, col2 = st.columns([3, 1])  # Adjust the ratio as needed
-
+    st.subheader("Your Initiatives")
+    col1, col2, colx = st.columns([3, 3, 10])
+    # Add any quick action buttons or links here
     with col1:
-        st.subheader("Your Initiatives")
+        st.button("➕ Add New Initiative", use_container_width=True)
+    with col2:
+        st.button("📄 Generate Report", use_container_width=True)
 
         # Example in-progress initiatives
         in_progress_initiatives = [
@@ -33,35 +35,28 @@ def display_tracking_dashboard():
                        ["Online Sales Growth", "Website Traffic"], "In Progress", "35%", "🟠"),
             Initiative("Optimization of Supply Chain Logistics", "Supply Chain", "1.5 years", ["Logistics Cost Reduction", "Delivery Time"], "In Progress", "60%", "🟢")] + st.session_state.get('initiatives', [])
 
-        # Convert data class objects to DataFrame for AgGrid
-        data = [initiative.to_dict()
-                for initiative in in_progress_initiatives]
-        df = pd.DataFrame(data)
+    # Convert data class objects to DataFrame for AgGrid
+    data = [initiative.to_dict()
+            for initiative in in_progress_initiatives]
+    df = pd.DataFrame(data)
 
-        # Customize AgGrid
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_selection('single')  # Enable single row selection
-        grid_options = gb.build()
+    # Customize AgGrid
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_selection('single')  # Enable single row selection
+    grid_options = gb.build()
 
-        # Customizing the grid's appearance
-        grid_response = AgGrid(
-            df,
-            gridOptions=grid_options,
-            columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS,
-            theme=AgGridTheme.ALPINE,
-            fit_columns_on_grid_load=True)
-        # Handling selection
-        selected = grid_response['selected_rows']
-        if selected:
-            selected_row_data = selected[0]  # Assuming single row selection
-            display_vci_details(selected_row_data)
-
-    with col2:
-        st.subheader("Quick Actions")
-        st.markdown("#")
-        # Add any quick action buttons or links here
-        st.button("➕ Add New Initiative", use_container_width=True)
-        st.button("📄 Generate Report", use_container_width=True)
+    # Customizing the grid's appearance
+    grid_response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS,
+        theme=AgGridTheme.ALPINE,
+        fit_columns_on_grid_load=True)
+    # Handling selection
+    selected = grid_response['selected_rows']
+    if selected:
+        selected_row_data = selected[0]  # Assuming single row selection
+        display_vci_details(selected_row_data)
 
 
 def display_vci_details(vci_data):

@@ -10,7 +10,7 @@ import plotly.express as px
 
 @wrap_in_column
 def display_analysis_dashboard():
-    col1, col2, = st.columns([1, 4])
+    col1, col2, = st.columns([2, 4])
     with col1:
         st.selectbox('Select Company', PORTFOLIO_COMPANIES)
     st.subheader("Process Map")
@@ -57,11 +57,12 @@ def display_knowledge_graph(updated):
                     height=450,
                     directed=True,
                     nodeHighlightBehavior=True,
-                    highlightColor="#F7A7A6",
+                    highlightColor="#7f2b9b",
                     collapsible=True,
                     physics={'enabled': False},
                     hierarchical={'enabled': True},
                     nodeSpacing=5000)
+
 
     # Render the graph
     selected_node_id = agraph(nodes=nodes,
@@ -180,8 +181,8 @@ def display_value_lever_suggestions():
     ]
 
     st.markdown("""
-            <div style="padding: 1rem; background-color: #ffcccc; border-radius: 0.5rem; text-align: center;">
-                <h4 style="margin: 0; color: #cc0000;">⚠️ New Value Levers Identified! ⚠️</h4>
+            <div style="padding: 1rem; background-color: #6bc661; border-radius: 0.5rem; text-align: center;">
+                <h4 style="margin: 0; color: #333;">⇩ New Value Levers Identified! ⇩</h4>
             </div>
             """, unsafe_allow_html=True)
 
