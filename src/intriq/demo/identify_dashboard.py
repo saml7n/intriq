@@ -2,8 +2,8 @@ import pandas as pd
 import streamlit as st
 from loguru import logger
 from data_dict import PORTFOLIO_COMPANIES
-from nodes_and_edges import EDGES
-from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, get_nodes_and_edges, wrap_in_column
+from nodes_and_edges import EDGES, FINANCIAL_METRICS, NODES, NODES_TRUNCATED, Mode
+from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, wrap_in_column
 from streamlit_agraph import agraph, Config
 import plotly.express as px
 
@@ -42,15 +42,8 @@ def display_knowledge_graph(updated):
     with col2:
         financial_kpi_options = st.multiselect(
             'Select which financial KPIs to display:',
-            [
-                'Gross Profit',
-                'Reported EBITDA',
-                'Reported Net Income',
-                'EBITDA Growth %',
-                'EBITDA Margin %',
-                'Net Sales'
-            ],
-            default='Net Sales',
+            FINANCIAL_METRICS,
+            default=FINANCIAL_METRICS[0],
             key="financial_kpi_options"
         )
 
@@ -66,7 +59,9 @@ def display_knowledge_graph(updated):
                     nodeHighlightBehavior=True,
                     highlightColor="#7f2b9b",
                     collapsible=True,
-                    physics={'enabled': False})
+                    physics={'enabled': False},
+                    hierarchical={'enabled': True},
+                    nodeSpacing=5000)
 
 
     # Render the graph
@@ -74,12 +69,12 @@ def display_knowledge_graph(updated):
                               edges=edges,
                               config=config)
     st.divider()
-    if graph_display_mode == 'Highlight Value Levers':
-        display_value_lever_suggestions()
     if selected_node_id:
         selected_node_label = get_node_labels_from_ids([selected_node_id])[0]
         with st.expander(f'View {selected_node_label} details'):
             display_kpi_details(selected_node_id)
+    if graph_display_mode == 'Highlight Value Levers':
+        display_value_lever_suggestions()
 
 
 def display_kpi_details(selected_node_id):
@@ -163,32 +158,26 @@ def display_value_lever_suggestions():
     # Example data - replace with real data
     initiatives = [
         Initiative(
-            name="Optimize Sales Funnel",
-            department="Sales",
+            name="Enhancing In-Store Experience",
+            department="Retail Operations",
             timeframe="6 months",
-            kpis=["Sales Growth", "Customer Retention"],
+            kpis=["Customer Satisfaction",
+                  "In-Store Sales Growth", "Repeat Customer Rate"],
             ease_of_implementation="Medium",
-            impact_on_profitability="$100,000",
-            description="Revise the sales strategy to focus on high-margin products..."
+            impact_on_profitability="$120,000",
+            description="Redesign and enhance the in-store experience to increase customer engagement and sales. This includes optimizing store layouts, improving product placements, and implementing interactive displays. The initiative aims to convert foot traffic into higher sales and repeat customers."
         ),
         Initiative(
-            name="Streamline Logistics",
-            department="Operations",
-            timeframe="3 months",
-            kpis=["Operational Efficiency", "Logistics Cost Reduction"],
-            ease_of_implementation="High",
-            impact_on_profitability="$75,000",
-            description="Implement a lean management system in the logistics department..."
-        ),
-        Initiative(
-            name="New Marketing Campaign",
-            department="Marketing",
-            timeframe="2 months",
-            kpis=["Market Reach", "Lead Generation"],
-            ease_of_implementation="Low",
-            impact_on_profitability="$50,000",
-            description="Launch a targeted digital marketing campaign..."
+            name="Optimizing Online Sales Platform",
+            department="E-Commerce",
+            timeframe="4 months",
+            kpis=["Online Sales Conversion Rate",
+                  "Website Traffic", "Average Order Value"],
+            ease_of_implementation="Medium",
+            impact_on_profitability="$95,000",
+            description="Improve the online shopping experience by optimizing the e-commerce platform. Enhancements include website redesign for user-friendliness, personalized product recommendations, and streamlined checkout processes. The goal is to boost online sales conversions and customer retention."
         )
+
     ]
 
     st.markdown("""
@@ -213,15 +202,7 @@ def display_value_lever_suggestions():
                 st.table(pd.DataFrame(initiative.kpis, columns=['KPI']))
 
             with cols[1]:
-                # Dummy graph data
-                graph_data = pd.DataFrame({
-                    'Metric': ['Value Created', 'ROI', 'Efficiency Gain'],
-                    'Amount': [100, 200, 150]
-                })
-                fig = px.bar(graph_data, x='Metric', y='Amount', text='Amount')
-                fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', xaxis=dict(
-                    showgrid=False), yaxis=dict(showgrid=False))
-                st.plotly_chart(fig, use_container_width=True)
+                display_graph_for_initiative(initiative.name)
 
             add_button = st.button(
                 f"Add '{initiative.name}' to your initiatives", key=f"add_button_{i}")
@@ -244,3 +225,46 @@ def add_to_initiatives_list(initiative):
         st.session_state['initiatives'] = []
     st.session_state['initiatives'].append(initiative)
     st.success('Initiative added to the list!')
+
+
+def get_nodes_and_edges(mode, financial_kpi_options=None, short_list=True):
+    mode = Mode(mode)
+    logger.info(f"Mode: {mode}")
+    # Incredibly hacky way of doing this, but it works for now
+    return_nodes = []
+    nodes = NODES_TRUNCATED if short_list else NODES
+    for node in nodes:
+        if 'FK' in node.node_data.id:
+            if node.node_data.label not in financial_kpi_options:
+                continue
+        if mode == Mode.ALL_NODES:
+            return_nodes.append(node.node_data)
+        elif mode in node.modes:
+            return_nodes.append(node.node_data)
+
+    return_node_ids = [n.id for n in return_nodes]
+    return_edges = [
+        e for e in EDGES if e.source in return_node_ids and e.to in return_node_ids
+    ]
+    return return_nodes, return_edges
+
+
+# Function to display graph based on selected initiative
+def display_graph_for_initiative(initiative_name):
+    if initiative_name == "Enhancing In-Store Experience":
+        graph_data = pd.DataFrame({
+            'Metric': ['In-Store Sales Growth', 'Customer Satisfaction Score', 'Repeat Customer Rate'],
+            'Impact (%)': [50, 15, 35]  # Dummy values
+        })
+    elif initiative_name == "Optimizing Online Sales Platform":
+        graph_data = pd.DataFrame({
+            'Metric': ['Online Conversion Rate', 'Average Order Value', 'Website Traffic Growth'],
+            'Impact (%)': [30, 45, 25]  # Dummy values
+        })
+    else:
+        return
+
+    fig = px.bar(graph_data, x='Metric', y='Impact (%)', text='Impact (%)')
+    fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', xaxis=dict(
+        showgrid=False), yaxis=dict(showgrid=False))
+    st.plotly_chart(fig, use_container_width=True)

@@ -44,28 +44,6 @@ class Initiative:
         }
 
 
-def get_nodes_and_edges(mode, financial_kpi_options=None, short_list=True):
-    mode = Mode(mode)
-
-    # Incredibly hacky way of doing this, but it works for now
-    return_nodes = []
-    nodes = NODES_TRUNCATED if short_list else NODES
-    for node in nodes:
-        if 'FK' in node.node_data.id:
-            if node.node_data.label not in financial_kpi_options:
-                continue
-        if mode == Mode.ALL_NODES:
-            return_nodes.append(node.node_data)
-        elif mode in node.modes:
-            return_nodes.append(node.node_data)
-
-    return_node_ids = [n.id for n in return_nodes]
-    return_edges = [
-        e for e in EDGES if e.source in return_node_ids and e.to in return_node_ids
-    ]
-    return return_nodes, return_edges
-
-
 def display_loading_bar():
     progress_text = "Analysing financial data."
     my_bar = st.progress(0, text="Analysing financial data.")

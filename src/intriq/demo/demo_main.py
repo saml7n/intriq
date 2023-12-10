@@ -13,7 +13,7 @@ from identify_dashboard import display_analysis_dashboard
 from nodes_and_edges import EDGES, NODES
 from streamlit_option_menu import option_menu
 from data_connection_dashboard import display_connection_dashboard
-from utils import display_loading_bar, generate_random_numbers_summing_to_100, generate_performance_numbers, get_nodes_and_edges, wrap_in_column
+from utils import generate_performance_numbers, wrap_in_column
 from tracking_dashboard import display_tracking_dashboard
 
 
@@ -52,7 +52,7 @@ def main():
     # Initialize 'current_page' in session state if not already set
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = 'upload_data'
-        st.session_state['data_sources'] = {'Sage': 'cash-coin'}
+        st.session_state['data_sources'] = {'Sage': 'cash-coin', 'SAP': 'gear'}
         st.session_state['show_value_levers'] = False
         st.session_state['selected_company'] = None
         st.session_state["messages"] = [
@@ -100,7 +100,7 @@ def overview_dashboard():
     st.header('Portfolio Overview')
     option = st.selectbox(
         'Select metric',
-        ('EBITDA', 'Costs of Goods Sold', 'Revenue')
+        ('Revenue', 'Gross Margin', 'EBITDA')
     )
     graph_df = pd.DataFrame(
         generate_performance_numbers(
@@ -113,14 +113,14 @@ def overview_dashboard():
     graph_df.index.name = 'Date'
     fig = px.line(
         graph_df,
-        labels={'value': f'{option} (% improvement)'}
+        labels={'value': f'{option} (% change)'}
     )
 
     # Display the line chart
     st.plotly_chart(fig, use_container_width=True)
 
     st.divider()
-    display_kpi_summary()
+    display_kpi_summary(option)
     # Portfolio company panel
     st.divider()
     st.header('Explore Portfolio')
@@ -131,7 +131,7 @@ def overview_dashboard():
         col1, col2, col3, col4 = st.columns(4)
         for i, company in enumerate(PORTFOLIO_COMPANIES[:4]):
             with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary' ):
+                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
                     st.session_state['selected_company'] = company
     # row 2
     with st.container():
@@ -142,8 +142,8 @@ def overview_dashboard():
                     st.session_state['selected_company'] = company
 
 
-def display_kpi_summary():
-    st.header("KPI Overview")
+def display_kpi_summary(metric):
+    st.header("Initiative Summary")
 
     # Sample data for RAG status counts and change from last month
     rag_status = {
@@ -163,17 +163,20 @@ def display_kpi_summary():
     col3.metric("🔴 Requires attention",
                 rag_status["Red"]["count"], rag_status["Red"]["change"])
 
-    # Top Performing KPIs (Dummy data)
-    kpi_data = {
-        "KPI": ["Sales Growth", "Operational Efficiency", "Customer Satisfaction"],
-        "Value": [75, 85, 90]
+    # Top Performing Initiatives (Dummy data)
+    initiative_data = {
+        "Initiative": [
+            "RFID Inventory Tracking (Lakeland)",
+            "Supplier Portal (Crew Clothing)", "AI-Powered Customer Service (Paperchase)"],
+        "Impact": [75, 85, 90]
     }
     st.markdown('#')
-    # Top Performing KPIs Section
-    st.subheader("Top Performing KPIs This Month")
-    fig = px.bar(kpi_data, x="KPI", y="Value", color="KPI", text="Value")
+    # Top Performing initiatives Section
+    st.subheader("Top Performing Initiatives This Month")
+    fig = px.bar(initiative_data, x="Initiative", y="Impact",
+                 color="Initiative", text=f"Impact")
     fig.update_layout(showlegend=False, xaxis_title="",
-                      yaxis_title="Value", plot_bgcolor="rgba(0,0,0,0)")
+                      yaxis_title=f"{metric} Impact", plot_bgcolor="rgba(0,0,0,0)")
     fig.update_xaxes(showgrid=False)
     fig.update_yaxes(showgrid=False)
     st.plotly_chart(fig, use_container_width=True)
