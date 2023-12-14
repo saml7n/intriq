@@ -1,117 +1,89 @@
 import { Dialog } from '@headlessui/react';
-import { lazy, Suspense, useState } from 'react';
-import { Outlet, RouteObject, useRoutes, BrowserRouter } from 'react-router-dom';
-import { LiaLightbulbSolid, LiaHomeSolid, LiaPlugSolid, LiaCloudUploadAltSolid, LiaPuzzlePieceSolid, LiaHistorySolid } from 'react-icons/lia';
-import { IoShareSocialOutline, IoColorWand, IoMailOutline } from "react-icons/io5";
-import { TbChartCandleFilled, TbPlusMinus, TbReportAnalytics, TbMessage } from "react-icons/tb";
-import { GrLineChart, GrMoney } from "react-icons/gr";
-import { BsPatchExclamationFill } from "react-icons/bs";
-import { SlMagnifier } from "react-icons/sl";
-import { PiListChecksBold, PiGraphBold } from "react-icons/pi";
-import { LuLightbulb } from "react-icons/lu";
+import { lazy, ReactNode, Suspense, useState } from 'react';
+import { Outlet, RouteObject, useRoutes, BrowserRouter, useNavigate } from 'react-router-dom';
+import {
+  LiaLightbulbSolid,
+  LiaHomeSolid,
+  LiaPlugSolid,
+  LiaCloudUploadAltSolid,
+  LiaPuzzlePieceSolid,
+  LiaHistorySolid,
+} from 'react-icons/lia';
+import { IoShareSocialOutline, IoColorWand, IoMailOutline } from 'react-icons/io5';
+import { TbChartCandleFilled, TbPlusMinus, TbReportAnalytics, TbMessage } from 'react-icons/tb';
+import { GrLineChart, GrMoney } from 'react-icons/gr';
+import { BsPatchExclamationFill } from 'react-icons/bs';
+import { SlMagnifier } from 'react-icons/sl';
+import { PiListChecksBold, PiGraphBold } from 'react-icons/pi';
+import { LuLightbulb } from 'react-icons/lu';
+import { NavigationProvider, useNavigation } from '~/lib/NavigationContext';
 
 const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
 
-const IndexScreen = lazy(() => import('~/components/screens/Index'));
+const DashboardExampleScreen = lazy(() => import('~/components/screens/DashboardExample'));
+const CompanySetupScreen = lazy(() => import('~/components/screens/CompanySetup'));
+const DataConnectScreen = lazy(() => import('~/components/screens/DataConnect'));
+const StartScreen = lazy(() => import('~/components/screens/Start'));
 const Page404Screen = lazy(() => import('~/components/screens/404'));
+
+interface NavigationLinkProps {
+  children: ReactNode;
+  stepIndex: number;
+  url: string;
+}
+const NavigationStep: React.FC<NavigationLinkProps> = ({ url, stepIndex, children }) => {
+  const { activeStep, setActiveStep, completedStep, setCompletedStep } = useNavigation();
+  const navigateRouter = useNavigate();
+  const navigate = (url: string) => {
+    setActiveStep(stepIndex);
+    navigateRouter(url);
+  };
+
+  const isActiveStep = activeStep === stepIndex;
+  const isNextStep = stepIndex === completedStep + 1;
+  const isCompleted = stepIndex <= completedStep;
+
+  return (
+    <li className={`step ${isNextStep ? 'step-primary' : isCompleted ? 'step-success' : ''}`}>
+      <button
+        className={`btn btn-block justify-start ${isCompleted ? '' : isNextStep ? 'btn-primary' : 'btn-disabled'} ${
+          isActiveStep && !isNextStep ? 'btn-outline' : isNextStep ? '' : 'btn-ghost'
+        }`}
+        onClick={() => navigate(url)}
+      >
+        {children}
+      </button>
+    </li>
+  );
+};
 
 function Layout() {
   return (
     <div className="drawer min-h-screen bg-base-200 lg:drawer-open">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-      <Outlet />
-      <aside className="drawer-side z-10">
+      <main className="drawer-content">
+        <Outlet />
+      </main>
+      <aside className="drawer-side z-40" style={{ scrollBehavior: 'smooth', scrollPaddingTop: '5rem' }}>
         <label htmlFor="my-drawer" className="drawer-overlay"></label>
         <nav className="flex min-h-screen w-200 flex-col gap-2 overflow-y-auto bg-base-100 px-6 py-10">
-          <div className="mx-4 flex items-center gap-2 font-black">
-            <svg width="32" height="32" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="256" y="670.72" width="512" height="256" rx="128" className="fill-base-content" />
-              <circle cx="512" cy="353.28" r="256" className="fill-base-content" />
-              <circle cx="512" cy="353.28" r="261" stroke="black" stroke-opacity="0.2" stroke-width="10" />
-              <circle cx="512" cy="353.28" r="114.688" className="fill-base-100" />
-            </svg>
-            Daisy Corp
-          </div>
-          <ul className="menu">
-            <li>
-              <a className="active">
-                <LiaHomeSolid /> Dashboard
-              </a>
-            </li>
-            <li>
-              <details>
-                <summary>
-                  <LiaPlugSolid /> Data Connection/Upload
-                </summary>
-                <ul>
-                  <li>
-                    <a><LiaPuzzlePieceSolid/> Integration Options</a>
-                  </li>
-                  <li>
-                    <a><LiaCloudUploadAltSolid/> File Upload</a>
-                  </li>
-                  <li>
-                    <a><IoShareSocialOutline/> Data Mapping Assistance</a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>
-                  <GrMoney/> Interactive P&L Statement
-                </summary>
-                <ul>
-                  <li>
-                    <a>
-                      <BsPatchExclamationFill/> Anomalies detected <span className="badge badge-info badge-sm">12</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a><SlMagnifier/> Drill-Down Capabilities</a>
-                  </li>
-                  <li>
-                    <a><PiGraphBold/> Data Linkage Visualisation</a>
-                  </li>
-                  <li>
-                    <a><LiaHistorySolid/> Historical Data Comparison</a>
-                  </li>
-                  <li>
-                    <a><PiListChecksBold/> Go-Forward Tracking of Iniatitives</a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>
-                <TbPlusMinus/>
-                  Value Levers
-                </summary>
-                <ul>
-                  <li>
-                    <a><TbChartCandleFilled/> List of Value Levers</a>
-                  </li>
-                  <li>
-                    <a><IoColorWand/> Value Lever Wizard</a>
-                  </li>
-                  <li>
-                    <a><GrLineChart/> KPI Tracking</a>
-                  </li>
-                  <li>
-                    <a><LuLightbulb/> Recommendation Engine</a>
-                  </li>
-                  <li>
-                    <a><TbReportAnalytics/> Impact Analysis</a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              <a>
-                <IoMailOutline/> Messages<span className="badge badge-info badge-sm">12</span>
-              </a>
-            </li>
+          <div className="mx-4 flex items-center gap-2 font-black">INTRIQ</div>
+          <ul className="steps steps-vertical">
+            <NavigationStep url="/setup-company" stepIndex={1}>
+              <LiaHomeSolid /> Setup Company
+            </NavigationStep>
+            <NavigationStep url="/connect-data" stepIndex={2}>
+              <LiaPlugSolid /> Connect Data
+            </NavigationStep>
+            <NavigationStep url="/discover-insights" stepIndex={3}>
+              <PiGraphBold /> Discover Insights
+            </NavigationStep>
+            <NavigationStep url="/track" stepIndex={4}>
+              <GrLineChart /> Track
+            </NavigationStep>
+            <NavigationStep url="/dashboard-example" stepIndex={5}>
+              <GrLineChart /> Dashboard
+            </NavigationStep>
           </ul>
         </nav>
       </aside>
@@ -122,7 +94,9 @@ function Layout() {
 export const Router = () => {
   return (
     <BrowserRouter>
-      <InnerRouter />
+      <NavigationProvider>
+        <InnerRouter />
+      </NavigationProvider>
     </BrowserRouter>
   );
 };
@@ -135,7 +109,23 @@ const InnerRouter = () => {
       children: [
         {
           index: true,
-          element: <IndexScreen />,
+          element: <StartScreen />,
+        },
+        {
+          path: '/setup-company',
+          element: <CompanySetupScreen />,
+        },
+        {
+          path: '/connect-data',
+          element: <DataConnectScreen />,
+        },
+        {
+          path: '/track',
+          element: <StartScreen />,
+        },
+        {
+          path: '/dashboard-example',
+          element: <DashboardExampleScreen />,
         },
         {
           path: '*',
