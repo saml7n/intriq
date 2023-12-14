@@ -46,6 +46,7 @@ def main():
     if 'current_page' not in st.session_state:
         st.session_state['current_page'] = MenuOption.OVERVIEW.name
         st.session_state['current_page_switch'] = False
+        st.session_state['rerun_flag'] = False
         st.session_state['data_sources'] = {'Sage': 'cash-coin', 'SAP': 'gear'}
         st.session_state['portfolio_companies'] = INITIAL_PORTFOLIO_COMPANIES
         st.session_state['show_value_levers'] = False
@@ -73,8 +74,16 @@ def main():
         logger.info(f"Current page2: {st.session_state['current_page']}")
         if st.session_state['current_page_switch']:
             st.session_state['current_page_switch'] = False
-        else:
+            logger.info('hit')
+        elif selected != st.session_state['current_page'] and not st.session_state['rerun_flag']:
             st.session_state['current_page'] = MenuOption(selected).name
+            st.session_state['rerun_flag'] = True
+            logger.info('miss')
+            logger.info(selected)
+            st.rerun()
+        elif st.session_state['rerun_flag']:
+            st.session_state['rerun_flag'] = False
+            logger.info('resetting rerun')
     logger.info(f"Current page3: {st.session_state['current_page']}")
     if st.session_state['current_page'] == MenuOption.OVERVIEW.name:
         overview_dashboard()
