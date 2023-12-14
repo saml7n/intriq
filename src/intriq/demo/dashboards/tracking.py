@@ -1,9 +1,8 @@
 from st_aggrid import AgGrid, GridOptionsBuilder, ColumnsAutoSizeMode, AgGridTheme
-from chat import display_chatbot
+from components.chat import display_chatbot
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from data_dict import PORTFOLIO_COMPANIES
 from utils import Initiative, generate_performance_numbers
 
 
@@ -11,8 +10,8 @@ def display_tracking_dashboard():
     st.header("Value Creation Tracking")
     col1, col2, = st.columns([2, 5])
     with col1:
-        st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
-
+        st.selectbox('Select Company',
+                     st.session_state['portfolio_companies'], key='company')
     st.subheader("Your Initiatives")
     col1, col2, colx = st.columns([3, 3, 10])
     # Add any quick action buttons or links here

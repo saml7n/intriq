@@ -1,22 +1,15 @@
-import json
-import random
 import ssl
-import pandas as pd
+from loguru import logger
 import streamlit as st
 from dotenv import main
 import nltk
-from loguru import logger
-from streamlit_agraph import agraph, Config
-import plotly.express as px
-from data_dict import PORTFOLIO_COMPANIES
-from identify_dashboard import display_analysis_dashboard
-from nodes_and_edges import EDGES, NODES
 from streamlit_option_menu import option_menu
-from data_connection_dashboard import display_connection_dashboard
-from utils import generate_performance_numbers, wrap_in_column
-from tracking_dashboard import display_tracking_dashboard
-
-
+from dashboards.analyse import display_analysis_dashboard
+from dashboards.data_connection import display_connection_dashboard
+from dashboards.tracking import display_tracking_dashboard
+from dashboards.overview import overview_dashboard
+from data_dict import INITIAL_PORTFOLIO_COMPANIES
+from utils import MenuOption
 main.load_dotenv()
 _PARTITION_STRATEGY = 'hi_res'
 _PARTITION_MODEL_NAME = 'yolox'
@@ -51,8 +44,10 @@ def main():
 
     # Initialize 'current_page' in session state if not already set
     if 'current_page' not in st.session_state:
-        st.session_state['current_page'] = 'upload_data'
+        st.session_state['current_page'] = MenuOption.OVERVIEW.name
+        st.session_state['current_page_switch'] = False
         st.session_state['data_sources'] = {'Sage': 'cash-coin', 'SAP': 'gear'}
+        st.session_state['portfolio_companies'] = INITIAL_PORTFOLIO_COMPANIES
         st.session_state['show_value_levers'] = False
         st.session_state['selected_company'] = None
         st.session_state["messages"] = [
@@ -61,125 +56,34 @@ def main():
 
     # Options Menu
     with st.sidebar:
+        default_index = list(MenuOption).index(
+            MenuOption[st.session_state['current_page']])
         selected = option_menu(
-            'intriq', [
-                'Overview',
-                'Connect Data',
-                'Identify',
-                'Track',
-                'Assistant',
-                'About'
-            ],
+            'intriq', [option.value for option in MenuOption],
             icons=[
                 'house',
                 'plug',
                 'eye',
                 'graph-up',
-                'robot',
                 'info-circle'
             ],
             menu_icon='intersect',
-            default_index=0
+            default_index=default_index,
         )
-    if selected == 'Overview':
+        logger.info(f"Current page2: {st.session_state['current_page']}")
+        if st.session_state['current_page_switch']:
+            st.session_state['current_page_switch'] = False
+        else:
+            st.session_state['current_page'] = MenuOption(selected).name
+    logger.info(f"Current page3: {st.session_state['current_page']}")
+    if st.session_state['current_page'] == MenuOption.OVERVIEW.name:
         overview_dashboard()
-    if selected == 'Connect Data':
+    if st.session_state['current_page'] == MenuOption.CONNECT_DATA.name:
         display_connection_dashboard()
-    if selected == 'Identify':
+    if st.session_state['current_page'] == MenuOption.ANALYSE.name:
         display_analysis_dashboard()
-    if selected == 'Track':
+    if st.session_state['current_page'] == MenuOption.TRACK.name:
         display_tracking_dashboard()
-
-
-@wrap_in_column
-def overview_dashboard():
-    # Header
-    st.title('Welcome to intriq')
-    st.subheader('*One tool for all your transformation diagnostic needs*')
-    st.divider()
-    st.header('Portfolio Overview')
-    option = st.selectbox(
-        'Select metric',
-        ('Revenue', 'Gross Margin', 'EBITDA')
-    )
-    graph_df = pd.DataFrame(
-        generate_performance_numbers(
-            PORTFOLIO_COMPANIES, option
-        ),
-        index=pd.date_range(
-            '2022-12-01', periods=12, freq='M'
-        )
-    )
-    graph_df.index.name = 'Date'
-    fig = px.line(
-        graph_df,
-        labels={'value': f'{option} (% change)'}
-    )
-
-    # Display the line chart
-    st.plotly_chart(fig, use_container_width=True)
-
-    st.divider()
-    display_kpi_summary(option)
-    # Portfolio company panel
-    st.divider()
-    st.header('Explore Portfolio')
-
-    # Generating clickable buttons for each company in grid
-    # row 1
-    with st.container():
-        col1, col2, col3, col4 = st.columns(4)
-        for i, company in enumerate(PORTFOLIO_COMPANIES[:4]):
-            with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
-                    st.session_state['selected_company'] = company
-    # row 2
-    with st.container():
-        col5, col6, col7, col8 = st.columns(4)
-        for i, company in enumerate(PORTFOLIO_COMPANIES[4:], start=4):
-            with locals()[f'col{i+1}']:
-                if st.button(company, key=f'{i}', use_container_width=True, type='primary' if st.session_state['selected_company'] == company else 'secondary'):
-                    st.session_state['selected_company'] = company
-
-
-def display_kpi_summary(metric):
-    st.header("Initiative Summary")
-
-    # Sample data for RAG status counts and change from last month
-    rag_status = {
-        "Green": {"count": 12, "change": "2"},
-        "Amber": {"count": 7, "change": "-3"},
-        "Red": {"count": 5, "change": "1"}
-    }
-
-    st.subheader("Initiative RAG Status")
-    col1, col2, col3 = st.columns(3)
-
-    # Display RAG status using st.metric
-    col1.metric("🟢 On track",
-                rag_status["Green"]["count"], rag_status["Green"]["change"])
-    col2.metric("🟠 At risk",
-                rag_status["Amber"]["count"], rag_status["Amber"]["change"])
-    col3.metric("🔴 Requires attention",
-                rag_status["Red"]["count"], rag_status["Red"]["change"])
-
-    # Top Performing Initiatives (Dummy data)
-    initiative_data = {
-        "Initiative": [
-            "RFID Inventory Tracking (Lakeland)",
-            "Supplier Portal (Crew Clothing)", "AI-Powered Customer Service (Paperchase)"],
-        "Impact": [75, 85, 90]
-    }
-    st.markdown('#')
-    # Top Performing initiatives Section
-    st.subheader("Top Performing Initiatives This Month")
-    fig = px.bar(initiative_data, x="Initiative", y="Impact",
-                 color="Initiative", text=f"Impact")
-    fig.update_layout(showlegend=False, xaxis_title="",
-                      yaxis_title=f"{metric} Impact", plot_bgcolor="rgba(0,0,0,0)")
-    fig.update_xaxes(showgrid=False)
-    fig.update_yaxes(showgrid=False)
-    st.plotly_chart(fig, use_container_width=True)
 
 
 if __name__ == '__main__':

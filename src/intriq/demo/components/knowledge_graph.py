@@ -1,32 +1,10 @@
 import pandas as pd
 import streamlit as st
 from loguru import logger
-from data_dict import PORTFOLIO_COMPANIES
 from nodes_and_edges import EDGES, FINANCIAL_METRICS, NODES, NODES_TRUNCATED, Mode
-from utils import Initiative, display_loading_bar, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids, wrap_in_column
+from utils import Initiative, generate_color_map, generate_performance_numbers, generate_random_numbers_summing_to_100, get_node_labels_from_ids
 from streamlit_agraph import agraph, Config
 import plotly.express as px
-
-
-@wrap_in_column
-def display_analysis_dashboard():
-    col1, col2, = st.columns([2, 4])
-    with col1:
-        st.selectbox('Select Company', PORTFOLIO_COMPANIES)
-    st.subheader("Process Map")
-    st.write(
-        "The process map below shows the relations between operational processes and financial metrics for your company. Click on the nodes to see more information about each KPI."
-    )
-    if st.session_state['new_data_added']:
-        with st.form('new_data_added_form'):
-            st.info(
-                'New data sources have been added. Click to update graph', icon="ℹ️"
-            )
-            if st.form_submit_button("Update Graph"):
-                st.session_state['new_data_added'] = False
-                display_loading_bar()
-                st.rerun()
-    display_knowledge_graph(updated=not st.session_state['new_data_added'])
 
 
 def display_knowledge_graph(updated):
@@ -63,12 +41,10 @@ def display_knowledge_graph(updated):
                     hierarchical={'enabled': True},
                     nodeSpacing=5000)
 
-
     # Render the graph
     selected_node_id = agraph(nodes=nodes,
                               edges=edges,
                               config=config)
-    st.divider()
     if selected_node_id:
         selected_node_label = get_node_labels_from_ids([selected_node_id])[0]
         with st.expander(f'View {selected_node_label} details'):

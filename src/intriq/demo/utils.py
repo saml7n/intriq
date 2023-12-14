@@ -1,5 +1,5 @@
 from dataclasses import Field, asdict, dataclass, field
-from enum import Enum
+from enum import Enum, auto
 from typing import List
 import numpy as np
 from streamlit_agraph import Node as stNode
@@ -13,6 +13,17 @@ import pandas as pd
 from nodes_and_edges import EDGES, NODES, NODES_TRUNCATED, Mode
 
 # TODO: Split into 3 classes
+
+
+class MenuOption(Enum):
+    OVERVIEW = 'Overview'
+    CONNECT_DATA = 'Connect Data'
+    ANALYSE = 'Analyse'
+    TRACK = 'Track'
+    ABOUT = 'About'
+
+    def to_index(self):
+        return list(MenuOption).index(self)
 
 
 @dataclass
