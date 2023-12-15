@@ -1,5 +1,6 @@
 import { Dialog } from '@headlessui/react';
-import { lazy, ReactNode, Suspense, useState } from 'react';
+import { ReactNode, useState } from 'react';
+import { lazy, Suspense } from 'react-lazy-no-flicker';
 import { Outlet, RouteObject, useRoutes, BrowserRouter, useNavigate } from 'react-router-dom';
 import {
   LiaLightbulbSolid,
@@ -17,15 +18,16 @@ import { SlMagnifier } from 'react-icons/sl';
 import { PiListChecksBold, PiGraphBold } from 'react-icons/pi';
 import { LuLightbulb } from 'react-icons/lu';
 import { NavigationProvider, useNavigation } from '~/lib/NavigationContext';
+import Loadable from '../shared/Loadable';
 
 const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
 
-const DashboardExampleScreen = lazy(() => import('~/components/screens/DashboardExample'));
-const CompanySetupScreen = lazy(() => import('~/components/screens/CompanySetup'));
-const DataConnectScreen = lazy(() => import('~/components/screens/DataConnect'));
-const DataConnectAddScreen = lazy(() => import('~/components/screens/DataConnectAdd')); 
-const StartScreen = lazy(() => import('~/components/screens/Start'));
-const Page404Screen = lazy(() => import('~/components/screens/404'));
+const DashboardExampleScreen = Loadable(lazy(() => import('~/components/screens/DashboardExample')));
+const CompanySetupScreen = Loadable(lazy(() => import('~/components/screens/CompanySetup')));
+const DataConnectScreen = Loadable(lazy(() => import('~/components/screens/DataConnect')));
+const DataConnectAddScreen = Loadable(lazy(() => import('~/components/screens/DataConnectAdd'))); 
+const StartScreen = Loadable(lazy(() => import('~/components/screens/Start')));
+const Page404Screen = Loadable(lazy(() => import('~/components/screens/404')));
 
 interface NavigationLinkProps {
   children: ReactNode;
@@ -146,8 +148,6 @@ const InnerRouter = () => {
   ];
   const element = useRoutes(routes);
   return (
-    <div>
-      <Suspense fallback={<Loading />}>{element}</Suspense>
-    </div>
+    <div>{element}</div>
   );
 };

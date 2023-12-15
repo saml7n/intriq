@@ -3233,6 +3233,11 @@ react-is@^16.13.1, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-lazy-no-flicker@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-lazy-no-flicker/-/react-lazy-no-flicker-2.1.0.tgz#69c867db289a65f03bb6696dffe997536ab69b30"
+  integrity sha512-lWYRDGaM0Aei21MzNtO6z2rfk/a1YpyhYeFsFwB4IJgGnDFpmzT9pLoNsBh6CdDExNihrioyQGH17PIZL3U18A==
+
 react-motion@^0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/react-motion/-/react-motion-0.5.2.tgz#0dd3a69e411316567927917c6626551ba0607316"

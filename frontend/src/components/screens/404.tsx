@@ -1,6 +1,8 @@
 import {Head} from "~/components/shared/Head";
+import { useNavigate } from "react-router-dom";
 
 function Page404() {
+  const navigate = useNavigate();
   return (
     <>
       <Head title={'The page is not found'}></Head>
@@ -11,7 +13,7 @@ function Page404() {
               The page is not found.
             </h1>
             <div className='mt-4'>
-              <a href='/' className='link-primary'>Top Page</a>
+              <a className='link-primary cursor-pointer' onClick={() => navigate('/')}>Top Page</a>
             </div>
           </div>
         </div>
