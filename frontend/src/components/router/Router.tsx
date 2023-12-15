@@ -23,6 +23,7 @@ const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p
 const DashboardExampleScreen = lazy(() => import('~/components/screens/DashboardExample'));
 const CompanySetupScreen = lazy(() => import('~/components/screens/CompanySetup'));
 const DataConnectScreen = lazy(() => import('~/components/screens/DataConnect'));
+const DataConnectAddScreen = lazy(() => import('~/components/screens/DataConnectAdd')); 
 const StartScreen = lazy(() => import('~/components/screens/Start'));
 const Page404Screen = lazy(() => import('~/components/screens/404'));
 
@@ -117,7 +118,16 @@ const InnerRouter = () => {
         },
         {
           path: '/connect-data',
-          element: <DataConnectScreen />,
+          children: [
+            {
+              path: '/connect-data/add',
+              element: <DataConnectAddScreen />,
+            },
+            {
+              path: '/connect-data',
+              element: <DataConnectScreen />,
+            }
+          ]
         },
         {
           path: '/track',
