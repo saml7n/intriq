@@ -20,13 +20,14 @@ import { LuLightbulb } from 'react-icons/lu';
 import { NavigationProvider, useNavigation } from '~/lib/NavigationContext';
 import Loadable from '../shared/Loadable';
 
-const DashboardExampleScreen = Loadable(lazy(() => import('~/components/screens/DashboardExample')));
+const StartScreen = Loadable(lazy(() => import('~/components/screens/Start')));
 const CompanySetupScreen = Loadable(lazy(() => import('~/components/screens/CompanySetup')));
 const DataConnectScreen = Loadable(lazy(() => import('~/components/screens/DataConnect')));
 const InsightDiscoveryScreen = Loadable(lazy(() => import('~/components/screens/InsightDiscovery')));
 const DataConnectAddScreen = Loadable(lazy(() => import('~/components/screens/DataConnectAdd'))); 
-const StartScreen = Loadable(lazy(() => import('~/components/screens/Start')));
+const InitiativeTrackingScreen = Loadable(lazy(() => import('~/components/screens/InitiativeTracking')));
 const Page404Screen = Loadable(lazy(() => import('~/components/screens/404')));
+const DashboardExampleScreen = Loadable(lazy(() => import('~/components/screens/DashboardExample')));
 
 interface NavigationLinkProps {
   children: ReactNode;
@@ -35,11 +36,7 @@ interface NavigationLinkProps {
 }
 const NavigationStep: React.FC<NavigationLinkProps> = ({ url, stepIndex, children }) => {
   const { activeStep, setActiveStep, completedStep, setCompletedStep } = useNavigation();
-  const navigateRouter = useNavigate();
-  const navigate = (url: string) => {
-    setActiveStep(stepIndex);
-    navigateRouter(url);
-  };
+  const navigate = useNavigate();
 
   const isActiveStep = activeStep === stepIndex;
   const isNextStep = stepIndex === completedStep + 1;
@@ -80,8 +77,8 @@ function Layout() {
             <NavigationStep url="/discover-insights" stepIndex={3}>
               <PiGraphBold /> Discover Insights
             </NavigationStep>
-            <NavigationStep url="/track" stepIndex={4}>
-              <GrLineChart /> Track
+            <NavigationStep url="/track-initiatives" stepIndex={4}>
+              <GrLineChart /> Track Initiatives
             </NavigationStep>
             <NavigationStep url="/dashboard-example" stepIndex={5}>
               <GrLineChart /> Dashboard
@@ -127,7 +124,7 @@ const InnerRouter = () => {
             {
               path: '/connect-data',
               element: <DataConnectScreen />,
-            }
+            },
           ]
         },
         {
@@ -135,8 +132,8 @@ const InnerRouter = () => {
           element: <InsightDiscoveryScreen />,
         },
         {
-          path: '/track',
-          element: <StartScreen />,
+          path: '/track-initiatives',
+          element: <InitiativeTrackingScreen />,
         },
         {
           path: '/dashboard-example',

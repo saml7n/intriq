@@ -1,6 +1,6 @@
 import { Head } from '~/components/shared/Head';
 import '~/../node_modules/react-vis/dist/style.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigation } from '~/lib/NavigationContext';
 import Navbar from '../shared/Navbar';
 import ReactFlow, {
   Node,
@@ -14,7 +14,7 @@ import ReactFlow, {
   Background,
   BackgroundVariant,
 } from 'reactflow';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlexibleXYPlot, LineSeries, XAxis, YAxis } from 'react-vis';
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 
@@ -35,7 +35,7 @@ const dummydata = [
 ];
 
 function InsightDiscovery() {
-  const navigate = useNavigate();
+  const { completedStep, setCompletedStep, activeStep, setActiveStep } = useNavigation();
   const { getNode } = useReactFlow();
 
   const [detailsFull, setDetailsFull] = useState<boolean>(false);
@@ -51,6 +51,10 @@ function InsightDiscovery() {
       setSelectedNodeId(null);
     }
   };
+
+  useEffect(() => {
+    setActiveStep(3);
+  }, []);
 
   const initialNodes: Node<NodeData>[] = [
     { id: '1', position: { x: 0, y: 0 }, data: { label: 'Revenue', type: 'FinancialMetric' } },
@@ -101,6 +105,10 @@ function InsightDiscovery() {
     } else setNavbarTitle('Discover Insights');
   }
 
+  function handleOnClick(): void {
+    if (completedStep < 3) setCompletedStep(3);
+  }
+
   return (
     <>
       <Head title="Discover Insights" />
@@ -125,46 +133,49 @@ function InsightDiscovery() {
         animate={selectedNodeId ? (detailsFull ? 'full' : 'open') : 'hidden'}
         variants={detailsVariants}
         onAnimationComplete={onAnimationComplete}
-        className="absolute bg-base-200 w-full top-[100%] flex flex-col p-6 pt-3 overflow-visible"
+        className="absolute bg-base-200 w-full top-[100%] flex flex-col p-6 pt-3 pr-0 overflow-visible"
         style={{ height: 'calc(100% + 4rem)' }}
       >
         <h1 className="lg:text-2xl lg:font-light">{selectedNodeLabel}</h1>
         <p>3% p.a.</p>
         <span className='pb-3'></span>
-        <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 lg:gap-x-12 overflow-y-scroll">
-          <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
-            <div className="card-body pb-0">
-              <h2 className="card-title">19,000</h2>
-              <p>Downloads</p>
-            </div>
-            <FlexibleXYPlot>
-              <XAxis />
-              <YAxis />
-              <LineSeries data={dummydata} />
-            </FlexibleXYPlot>
-          </section>
-          <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
-            <div className="card-body pb-0">
-              <h2 className="card-title">19,000</h2>
-              <p>Downloads</p>
-            </div>
-            <FlexibleXYPlot>
-              <XAxis />
-              <YAxis />
-              <LineSeries data={dummydata} />
-            </FlexibleXYPlot>
-          </section>
-          <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
-            <div className="card-body pb-0">
-              <h2 className="card-title">19,000</h2>
-              <p>Downloads</p>
-            </div>
-            <FlexibleXYPlot>
-              <XAxis />
-              <YAxis />
-              <LineSeries data={dummydata} />
-            </FlexibleXYPlot>
-          </section>
+        <div className='pr-6 overflow-y-scroll'>
+          <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 lg:gap-x-12">
+            <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
+              <div className="card-body pb-0">
+                <h2 className="card-title">19,000</h2>
+                <p>Downloads</p>
+              </div>
+              <FlexibleXYPlot>
+                <XAxis />
+                <YAxis />
+                <LineSeries data={dummydata} />
+              </FlexibleXYPlot>
+            </section>
+            <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
+              <div className="card-body pb-0">
+                <h2 className="card-title">19,000</h2>
+                <p>Downloads</p>
+              </div>
+              <FlexibleXYPlot>
+                <XAxis />
+                <YAxis />
+                <LineSeries data={dummydata} />
+              </FlexibleXYPlot>
+            </section>
+            <section className="card col-span-12 bg-base-100 shadow-sm xl:col-span-6 min-h-[300px]">
+              <div className="card-body pb-0">
+                <h2 className="card-title">19,000</h2>
+                <p>Downloads</p>
+              </div>
+              <FlexibleXYPlot>
+                <XAxis />
+                <YAxis />
+                <LineSeries data={dummydata} />
+              </FlexibleXYPlot>
+            </section>
+            <button className='btn btn-primary col-span-8' onClick={() => handleOnClick()}>Track Initiative</button>
+          </div>
         </div>
         <motion.button
           animate={selectedNodeId ? (detailsFull ? 'full' : 'open') : 'hidden'}

@@ -4,17 +4,22 @@ import '~/../node_modules/react-vis/dist/style.css';
 import { IoMailOutline } from 'react-icons/io5';
 import { useNavigation } from '~/lib/NavigationContext';
 import Navbar from '../shared/Navbar';
+import { useEffect } from 'react';
 
 function CompanySetup() {
-  const { completedStep, setCompletedStep } = useNavigation();
+  const { completedStep, setCompletedStep, setActiveStep } = useNavigation();
   function onClickHandler(event: any): void {
     if (completedStep < 1) setCompletedStep(1);
   }
 
+  useEffect(() => {
+    setActiveStep(1);
+  }, []);
+
   return (
     <>
       <Head title="Setup Company" />
-      <Navbar/>
+      <Navbar title="Setup Company"/>
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
         <section className="col-span-12 xl:col-span-8">
           <div className="form-control">

@@ -73,7 +73,7 @@ function DataConnectAdd() {
   return (
     <>
       <Head title="Add a new Data Source" />
-      <Navbar />
+      <Navbar title="Add a new Data Source"/>
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
         <section className="col-span-12 z-10">
           <div className="form-control">
