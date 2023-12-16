@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
 import { useNavigation } from '~/lib/NavigationContext';
 import { useEffect } from 'react';
+import { BsThreeDots } from 'react-icons/bs';
 
 interface DataSourceRowProps {
   name: string;
@@ -36,7 +37,9 @@ const DataSourceRow: React.FC<DataSourceRowProps> = ({ name, type }) => {
         <span className="badge badge-ghost badge-sm">tbd badge</span>
       </td>
       <th>
-        <button className="btn btn-square btn-ghost btn-xs">details</button>
+        <button className="btn btn-square btn-outline btn-xs">
+          <BsThreeDots />
+        </button>
       </th>
     </tr>
   );
@@ -56,7 +59,7 @@ function DataConnect() {
   return (
     <>
       <Head title="Connect Data" />
-      <Navbar title='Connect Data' />
+      <Navbar title="Connect Data" />
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
         <section className="col-span-12 xl:col-span-6">
           <button className="form-control btn btn-primary" onClick={onClickHandler}>

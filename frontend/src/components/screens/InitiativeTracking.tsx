@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
 import { useNavigation } from '~/lib/NavigationContext';
 import { useEffect } from 'react';
+import { BsThreeDots } from "react-icons/bs";
 
 type RAGStatus = 'red' | 'amber' | 'green';
 
@@ -47,10 +48,10 @@ const InitiativeRow: React.FC<InitiativeRowProps> = ({ name, department, timefra
         {progress}
       </td>
       <td>
-        <span className={`badge badge-xs bg-${rag === 'red' ? 'error' : rag === 'amber' ? 'warning' : 'success'}`}></span>
+        <span className={`badge badge-xs ${rag === 'red' ? 'bg-error' : rag === 'amber' ? 'bg-warning' : 'bg-success'}`}></span>
       </td>
       <th>
-        <button className="btn btn-square btn-ghost btn-xs">details</button>
+        <button className="btn btn-square btn-outline btn-xs"><BsThreeDots/></button>
       </th>
     </tr>
   );
@@ -97,9 +98,9 @@ function InitiativeTracking() {
                 </tr>
               </thead>
               <tbody>
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' type="automatic loader" status='In Progress' progress='30%' RAG='amber' />
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' type="automatic loader" status='In Progress' progress='30%' RAG='amber' />
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' type="automatic loader" status='In Progress' progress='30%' RAG='amber' />
+                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='green' />
+                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='amber' />
+                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='red' />
               </tbody>
             </table>
           </div>
