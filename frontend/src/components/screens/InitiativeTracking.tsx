@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
 import { useNavigation } from '~/lib/NavigationContext';
 import { useEffect } from 'react';
-import { BsThreeDots } from "react-icons/bs";
+import { BsThreeDots } from 'react-icons/bs';
+import { MdDownload } from 'react-icons/md';
 
 type RAGStatus = 'red' | 'amber' | 'green';
 
@@ -38,20 +39,18 @@ const InitiativeRow: React.FC<InitiativeRowProps> = ({ name, department, timefra
           </div>
         </div>
       </td>
+      <td>{timeframe}</td>
+      <td>{status}</td>
+      <td>{progress}</td>
       <td>
-        {timeframe}
-      </td>
-      <td>
-        {status}
-      </td>
-      <td>
-        {progress}
-      </td>
-      <td>
-        <span className={`badge badge-xs ${rag === 'red' ? 'bg-error' : rag === 'amber' ? 'bg-warning' : 'bg-success'}`}></span>
+        <span
+          className={`badge badge-xs ${rag === 'red' ? 'bg-error' : rag === 'amber' ? 'bg-warning' : 'bg-success'}`}
+        ></span>
       </td>
       <th>
-        <button className="btn btn-square btn-outline btn-xs"><BsThreeDots/></button>
+        <button className="btn btn-square btn-outline btn-xs">
+          <BsThreeDots />
+        </button>
       </th>
     </tr>
   );
@@ -60,9 +59,7 @@ const InitiativeRow: React.FC<InitiativeRowProps> = ({ name, department, timefra
 function InitiativeTracking() {
   const navigate = useNavigate();
   const { setActiveStep } = useNavigation();
-  function onClickHandler(event: any): void {
-    
-  }
+  function onClickHandler(event: any): void {}
 
   useEffect(() => {
     setActiveStep(4);
@@ -71,11 +68,11 @@ function InitiativeTracking() {
   return (
     <>
       <Head title="Track Initiatives" />
-      <Navbar title='Track Initiatives' />
+      <Navbar title="Track Initiatives" />
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
         <section className="col-span-12 xl:col-span-6">
-          <button className="form-control btn btn-primary" onClick={onClickHandler}>
-            Add new Data Source
+          <button className="btn btn-primary" onClick={onClickHandler}>
+            <MdDownload transform="scale(1.4)" /> Generate Report
           </button>
 
           <hr className="my-6 border-t-2 border-base-content/5" />
@@ -98,9 +95,30 @@ function InitiativeTracking() {
                 </tr>
               </thead>
               <tbody>
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='green' />
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='amber' />
-                <InitiativeRow name="Digital Transformation" department='Technology' timeframe='1 year' status='In Progress' progress='30%' rag='red' />
+                <InitiativeRow
+                  name="Digital Transformation"
+                  department="Technology"
+                  timeframe="1 year"
+                  status="In Progress"
+                  progress="30%"
+                  rag="green"
+                />
+                <InitiativeRow
+                  name="Digital Transformation"
+                  department="Technology"
+                  timeframe="1 year"
+                  status="In Progress"
+                  progress="30%"
+                  rag="amber"
+                />
+                <InitiativeRow
+                  name="Digital Transformation"
+                  department="Technology"
+                  timeframe="1 year"
+                  status="In Progress"
+                  progress="30%"
+                  rag="red"
+                />
               </tbody>
             </table>
           </div>
