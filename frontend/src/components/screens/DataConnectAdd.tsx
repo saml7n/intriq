@@ -40,7 +40,7 @@ const DataSourceTypeCard: React.FC<DataSourceTypeCardProps> = ({
 }) => {
   return (
     <div
-      className={`card card-compact w-48 ${
+      className={`card card-compact w-52 h-60 ${
         selected ? 'bg-base-100 border-secondary' : 'bg-base-200 border-base-200'
       } border hover:bg-base-100 hover:border-secondary shadow-xl cursor-pointer`}
       onClick={onClickHandler}
@@ -75,7 +75,7 @@ function DataConnectAdd() {
       <Head title="Add a new Data Source" />
       <Navbar />
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
-        <section className="col-span-12 xl:col-span-4 z-10">
+        <section className="col-span-12 z-10">
           <div className="form-control">
             <div className="flex flex-wrap items-center gap-2">
               <DataSourceTypeCard
@@ -97,43 +97,63 @@ function DataConnectAdd() {
                 }}
               />
               <DataSourceTypeCard
-                name="file"
-                description="v2 automatic import"
+                name="Operational Data"
+                description="file upload: XLSX, XSL, PDF"
                 imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                selected={selectedDataSourceType === 'File'}
+                selected={selectedDataSourceType === 'OperationalFile'}
                 onClickHandler={() => {
-                  setSelectedDataSourceType('File');
+                  setSelectedDataSourceType('OperationalFile');
                 }}
               />
               <DataSourceTypeCard
-                name="SAP Connector"
-                description="v2 automatic import"
+                name="Financial Data"
+                description="file upload: XLSX, XSL, PDF"
                 imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                selected={selectedDataSourceType === 'SAP'}
+                selected={selectedDataSourceType === 'FinancialFile'}
                 onClickHandler={() => {
-                  setSelectedDataSourceType('SAP');
+                  setSelectedDataSourceType('FinancialFile');
                 }}
               />
               <DataSourceTypeCard
-                name="SAP Connector"
-                description="v2 automatic import"
+                name="Retail Operations"
+                description="interview transcript"
                 imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                selected={selectedDataSourceType === 'SAP'}
+                selected={selectedDataSourceType === 'RetailInterview'}
                 onClickHandler={() => {
-                  setSelectedDataSourceType('SAP');
+                  setSelectedDataSourceType('RetailInterview');
                 }}
               />
               <DataSourceTypeCard
-                name="SAP Connector"
-                description="v2 automatic import"
+                name="Sales & Marketing"
+                description="interview transcript"
                 imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                selected={selectedDataSourceType === 'SAP'}
+                selected={selectedDataSourceType === 'SalesMarkingInterview'}
                 onClickHandler={() => {
-                  setSelectedDataSourceType('SAP');
+                  setSelectedDataSourceType('SalesMarkingInterview');
+                }}
+              />
+              <DataSourceTypeCard
+                name="Supply Chain Management"
+                description="interview transcript"
+                imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                selected={selectedDataSourceType === 'SupplyChainInterview'}
+                onClickHandler={() => {
+                  setSelectedDataSourceType('SupplyChainInterview');
+                }}
+              />
+              <DataSourceTypeCard
+                name="Human Resources Management"
+                description="interview transcript"
+                imgSrc="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                selected={selectedDataSourceType === 'HRInterview'}
+                onClickHandler={() => {
+                  setSelectedDataSourceType('HRInterview');
                 }}
               />
             </div>
           </div>
+          </section>
+          <section className="col-span-12 xl:col-span-6 z-10">
           <hr className="my-6 border-t-2 border-base-content/5" />
           <motion.section initial={false} animate={selectedDataSourceType === 'SAP' ? 'open' : 'closed'} variants={detailsVariants} className="col-span-12 xl:col-span-4 overflow-hidden">
             <div className="form-control">

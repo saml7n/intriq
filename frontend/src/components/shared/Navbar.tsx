@@ -1,4 +1,8 @@
-function Navbar() {
+interface NavbarProps {
+  title: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ title }) => {
     return (
 <div className="bg-base-100 text-base-content sticky top-0 z-30 flex h-16 w-full justify-center bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm">
         <nav className="navbar w-full sticky bg-base-100 top-0 z-30 flex items-center plr-2 gap-2 lg:gap-4">
@@ -22,7 +26,7 @@ function Navbar() {
             </label>
           </span>
           <div className="grow">
-            <h1 className="lg:text-2xl lg:font-light">Setup Company</h1>
+            <h1 className="lg:text-2xl lg:font-light">{title}</h1>
           </div>
           <div>
             <input type="text" placeholder="Search" className="input input-sm rounded-full max-sm:w-24" />

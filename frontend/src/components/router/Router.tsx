@@ -20,11 +20,10 @@ import { LuLightbulb } from 'react-icons/lu';
 import { NavigationProvider, useNavigation } from '~/lib/NavigationContext';
 import Loadable from '../shared/Loadable';
 
-const Loading = () => <p className="p-4 w-full h-full text-center">Loading...</p>;
-
 const DashboardExampleScreen = Loadable(lazy(() => import('~/components/screens/DashboardExample')));
 const CompanySetupScreen = Loadable(lazy(() => import('~/components/screens/CompanySetup')));
 const DataConnectScreen = Loadable(lazy(() => import('~/components/screens/DataConnect')));
+const InsightDiscoveryScreen = Loadable(lazy(() => import('~/components/screens/InsightDiscovery')));
 const DataConnectAddScreen = Loadable(lazy(() => import('~/components/screens/DataConnectAdd'))); 
 const StartScreen = Loadable(lazy(() => import('~/components/screens/Start')));
 const Page404Screen = Loadable(lazy(() => import('~/components/screens/404')));
@@ -130,6 +129,10 @@ const InnerRouter = () => {
               element: <DataConnectScreen />,
             }
           ]
+        },
+        {
+          path: '/discover-insights',
+          element: <InsightDiscoveryScreen />,
         },
         {
           path: '/track',

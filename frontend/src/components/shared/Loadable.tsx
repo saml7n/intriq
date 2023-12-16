@@ -4,7 +4,7 @@ import { Suspense } from 'react-lazy-no-flicker';
 // This will show the animation
 const Loader: React.FC = () => {
   return (
-    <div className="position-fixed w-100 top-0 start-0 zindex-9999 bg-primary">
+    <div className="position-fixed w-100 top-0 start-0 z-[9999] bg-primary">
       <div style={{height: "3px"}} />
     </div>
   );

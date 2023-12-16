@@ -4,7 +4,7 @@ function Start() {
   return (
     <>
       <Head title="Company"></Head>
-      <div className="hero min-h-screen bg-gray-800">
+      <div className="hero min-h-screen bg-gray-200">
         <div className="text-center hero-content text-3xl font-bold">
           <div>
             <h1>

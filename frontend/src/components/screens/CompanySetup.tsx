@@ -16,7 +16,7 @@ function CompanySetup() {
       <Head title="Setup Company" />
       <Navbar/>
       <div className="grid grid-cols-12 grid-rows-[min-content] gap-y-12 p-4 lg:gap-x-12 lg:p-10">
-        <section className="col-span-12 xl:col-span-4">
+        <section className="col-span-12 xl:col-span-8">
           <div className="form-control">
             <label className="label">
               <span className="label-text">Company name</span>
