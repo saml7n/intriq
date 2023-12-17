@@ -1,10 +1,11 @@
 import { Head } from '~/components/shared/Head';
 import '~/../node_modules/react-vis/dist/style.css';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom';
 import Navbar from '../shared/Navbar';
 import { useNavigation } from '~/lib/NavigationContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BsThreeDots } from 'react-icons/bs';
+import { Document } from '~/lib/client';
 
 interface DataSourceRowProps {
   name: string;
@@ -48,6 +49,7 @@ const DataSourceRow: React.FC<DataSourceRowProps> = ({ name, type }) => {
 function DataConnect() {
   const navigate = useNavigate();
   const { setActiveStep } = useNavigation();
+  const [ documents, setDocuments ] = useState<Document[]>(useLoaderData() as Document[])
   function onClickHandler(event: any): void {
     navigate('/connect-data/add');
   }
@@ -83,8 +85,9 @@ function DataConnect() {
                 </tr>
               </thead>
               <tbody>
-                <DataSourceRow name="SAP Connection" type="automatic loader" />
-                <DataSourceRow name="financial statement" type="document" />
+                {documents.map((document) => 
+                  <DataSourceRow key={document.id} name={document.name} type={document.type} />
+                )}
               </tbody>
             </table>
           </div>

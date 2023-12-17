@@ -1,7 +1,15 @@
 import { Dialog } from '@headlessui/react';
-import { ReactNode, useState } from 'react';
-import { lazy, Suspense } from 'react-lazy-no-flicker';
-import { Outlet, RouteObject, useRoutes, BrowserRouter, useNavigate } from 'react-router-dom';
+import { ReactNode, lazy, useState } from 'react';
+import {
+  Outlet,
+  RouteObject,
+  useRoutes,
+  BrowserRouter,
+  useNavigate,
+  createBrowserRouter,
+  RouterProvider,
+  redirect,
+} from 'react-router-dom';
 import {
   LiaLightbulbSolid,
   LiaHomeSolid,
@@ -19,21 +27,24 @@ import { PiListChecksBold, PiGraphBold } from 'react-icons/pi';
 import { LuLightbulb } from 'react-icons/lu';
 import { NavigationProvider, useNavigation } from '~/lib/NavigationContext';
 import Loadable from '../shared/Loadable';
-
-const StartScreen = Loadable(lazy(() => import('~/components/screens/Start')));
-const CompanySetupScreen = Loadable(lazy(() => import('~/components/screens/CompanySetup')));
-const DataConnectScreen = Loadable(lazy(() => import('~/components/screens/DataConnect')));
-const InsightDiscoveryScreen = Loadable(lazy(() => import('~/components/screens/InsightDiscovery')));
-const DataConnectAddScreen = Loadable(lazy(() => import('~/components/screens/DataConnectAdd'))); 
-const InitiativeTrackingScreen = Loadable(lazy(() => import('~/components/screens/InitiativeTracking')));
-const Page404Screen = Loadable(lazy(() => import('~/components/screens/404')));
-const DashboardExampleScreen = Loadable(lazy(() => import('~/components/screens/DashboardExample')));
+import { DefaultService as api, ApiError, OpenAPI } from '~/lib/client';
+import Start from '~/components/screens/Start';
+import CompanySetup from '../screens/CompanySetup';
+import Page404 from '../screens/404';
+import DataConnectAdd from '../screens/DataConnectAdd';
+import DataConnect from '../screens/DataConnect';
+import InsightDiscovery from '../screens/InsightDiscovery';
+import InitiativeTracking from '../screens/InitiativeTracking';
+import DashboardExample from '../screens/DashboardExample';
 
 interface NavigationLinkProps {
   children: ReactNode;
   stepIndex: number;
   url: string;
 }
+
+OpenAPI.BASE = import.meta.env.VITE_API;
+
 const NavigationStep: React.FC<NavigationLinkProps> = ({ url, stepIndex, children }) => {
   const { activeStep, setActiveStep, completedStep, setCompletedStep } = useNavigation();
   const navigate = useNavigate();
@@ -90,64 +101,76 @@ function Layout() {
   );
 }
 
+const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Layout />,
+    errorElement: <Page404 />,
+    children: [
+      {
+        index: true,
+        element: <Start />,
+      },
+      {
+        path: 'setup-company/:companyId',
+        loader: async ({ request, params }) => {
+          return api.readCompanyCompanyIdGet(parseInt(params.companyId!)).catch((error) => {
+            if ((error.status = 404)) {
+              return redirect("/setup-company");
+            } else throw error;
+          });
+        },
+        element: <CompanySetup />,
+      },
+      {
+        path: 'setup-company',
+        element: <CompanySetup />,
+      },
+      {
+        path: 'connect-data/add',
+        element: <DataConnectAdd />,
+      },
+      {
+        path: 'connect-data',
+        element: <DataConnect />,
+        loader: async ({ request, params }) => {
+          return api.readDocumentsDocumentsGet().catch((error) => {
+            if ((error.status = 404)) {
+              return [];
+            } else throw error;
+          });
+        },
+      },
+      {
+        path: 'discover-insights',
+        element: <InsightDiscovery />,
+      },
+      {
+        path: 'track-initiatives',
+        element: <InitiativeTracking />,
+      },
+      {
+        path: 'dashboard-example',
+        element: <DashboardExample />,
+      },
+      {
+        path: '*',
+        element: <Page404 />,
+      },
+    ],
+  },
+];
+
+let router = createBrowserRouter(routes);
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => router.dispose());
+}
+
 export const Router = () => {
   return (
-    <BrowserRouter>
-      <NavigationProvider>
-        <InnerRouter />
-      </NavigationProvider>
-    </BrowserRouter>
-  );
-};
-
-const InnerRouter = () => {
-  const routes: RouteObject[] = [
-    {
-      path: '/',
-      element: <Layout />,
-      children: [
-        {
-          index: true,
-          element: <StartScreen />,
-        },
-        {
-          path: '/setup-company',
-          element: <CompanySetupScreen />,
-        },
-        {
-          path: '/connect-data',
-          children: [
-            {
-              path: '/connect-data/add',
-              element: <DataConnectAddScreen />,
-            },
-            {
-              path: '/connect-data',
-              element: <DataConnectScreen />,
-            },
-          ]
-        },
-        {
-          path: '/discover-insights',
-          element: <InsightDiscoveryScreen />,
-        },
-        {
-          path: '/track-initiatives',
-          element: <InitiativeTrackingScreen />,
-        },
-        {
-          path: '/dashboard-example',
-          element: <DashboardExampleScreen />,
-        },
-        {
-          path: '*',
-          element: <Page404Screen />,
-        },
-      ],
-    },
-  ];
-  const element = useRoutes(routes);
-  return (
-    <div>{element}</div>
+    <NavigationProvider>
+      <RouterProvider router={router} />
+    </NavigationProvider>
   );
 };

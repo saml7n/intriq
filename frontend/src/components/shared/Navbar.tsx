@@ -1,8 +1,11 @@
+import { useNavigation } from "react-router-dom";
+
 interface NavbarProps {
   title: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ title }) => {
+  const navigation = useNavigation();
   return (
     <div className="bg-base-100 text-base-content sticky top-0 z-30 flex h-16 w-full justify-center bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm">
       <nav className="navbar w-full sticky bg-base-100 top-0 z-30 flex items-center plr-2 gap-2 lg:gap-4">
@@ -30,6 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ title }) => {
         <div className="grow">
           <h1 className="lg:text-2xl lg:font-light">{title}</h1>
         </div>
+        { navigation.state !== 'idle' && <span className="loading loading-ring loading-lg"></span> }
         <div>
           <input type="text" placeholder="Search" className="input input-sm rounded-full max-sm:w-24" />
         </div>

@@ -1,10 +1,12 @@
 import {HelmetProvider} from "react-helmet-async";
-import Main from "~/components/root/Main";
+import { Router } from "../router/Router";
 
 export const App = () => {
   return (
     <HelmetProvider>      
-        <Main />
+        <main>
+          <Router />
+        </main>
     </HelmetProvider>
   )
 };
