@@ -98,10 +98,9 @@ def display_interview_questions(department):
         st.markdown(f"{i}. {question}")
 
     if st.button('Upload your data here'):
-        st.session_state['current_page'] = MenuOption.DATA_CONNECTION.name
-        st.session_state['current_page_switch'] = True
-        # st.rerun()
-        logger.info(f'current page {st.session_state["current_page"]}')
+        st.session_state['current_page_switch'] = MenuOption.CONNECT_DATA.name
+        logger.info('Switching to Connect Data')
+        logger.info(st.session_state['current_page_switch'])
         st.rerun()
 
 

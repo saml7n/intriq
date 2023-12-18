@@ -32,6 +32,7 @@ class Initiative:
     department: str
     timeframe: str
     kpis: List[str]
+    impact_on_profitability: str = None
 
     # for in progress initiatives
     status: str = 'Not Started'
@@ -40,7 +41,6 @@ class Initiative:
 
     # from suggestion panel
     ease_of_implementation: str = None
-    impact_on_profitability: str = None
     description: str = None
 
     def to_dict(self,):
@@ -52,6 +52,7 @@ class Initiative:
             'Current Status': self.status,
             'Progress': self.progress,
             'RAG Status': self.status_color,
+            'Impact': self.impact_on_profitability,
         }
 
 
@@ -103,18 +104,17 @@ def generate_random_numbers_summing_to_100(N):
 
 
 @st.cache_data(ttl=60*60*24)
-def generate_performance_numbers(categories, option):
+def generate_performance_numbers(categories, option, num_months=12, l_bound=-5, u_bound=15):
     performance_data = {}
     for category in categories:
         monthly_increases = []
         # Starting with a small positive value
         last_increase = random.uniform(0, 5)
-        for _ in range(12):
+        for _ in range(num_months):
             # Ensuring subsequent values are correlated with the previous ones
             # Random change to introduce some variation
             change = random.uniform(-3, 3)
-            # Limiting the range between -5% to 15%
-            next_increase = max(min(last_increase + change, 15), -5)
+            next_increase = max(min(last_increase + change, u_bound), l_bound)
             monthly_increases.append(round(next_increase, 2))
             last_increase = next_increase
 

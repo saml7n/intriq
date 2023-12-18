@@ -44,9 +44,8 @@ def main():
 
     # Initialize 'current_page' in session state if not already set
     if 'current_page' not in st.session_state:
+        st.session_state['current_page_switch'] = None
         st.session_state['current_page'] = MenuOption.OVERVIEW.name
-        st.session_state['current_page_switch'] = False
-        st.session_state['rerun_flag'] = False
         st.session_state['data_sources'] = {'Sage': 'cash-coin', 'SAP': 'gear'}
         st.session_state['portfolio_companies'] = INITIAL_PORTFOLIO_COMPANIES
         st.session_state['show_value_levers'] = False
@@ -57,8 +56,6 @@ def main():
 
     # Options Menu
     with st.sidebar:
-        default_index = list(MenuOption).index(
-            MenuOption[st.session_state['current_page']])
         selected = option_menu(
             'intriq', [option.value for option in MenuOption],
             icons=[
@@ -69,29 +66,30 @@ def main():
                 'info-circle'
             ],
             menu_icon='intersect',
-            default_index=default_index,
+            default_index=0,
         )
-        logger.info(f"Current page2: {st.session_state['current_page']}")
+        # Update current page based on selection or switch
+        logger.info(f'selected {selected}')
         if st.session_state['current_page_switch']:
-            st.session_state['current_page_switch'] = False
-            logger.info('hit')
-        elif selected != st.session_state['current_page'] and not st.session_state['rerun_flag']:
+            st.session_state['current_page'] = st.session_state['current_page_switch']
+            st.session_state['current_page_switch'] = None
+
+        else:
             st.session_state['current_page'] = MenuOption(selected).name
-            st.session_state['rerun_flag'] = True
-            logger.info('miss')
-            logger.info(selected)
-            st.rerun()
-        elif st.session_state['rerun_flag']:
-            st.session_state['rerun_flag'] = False
-            logger.info('resetting rerun')
-    logger.info(f"Current page3: {st.session_state['current_page']}")
-    if st.session_state['current_page'] == MenuOption.OVERVIEW.name:
+
+    # Display the selected dashboard
+    switch_page(st.session_state['current_page'])
+
+
+def switch_page(switch):
+    logger.info(f"Switching to {switch}")
+    if switch == MenuOption.OVERVIEW.name:
         overview_dashboard()
-    if st.session_state['current_page'] == MenuOption.CONNECT_DATA.name:
+    if switch == MenuOption.CONNECT_DATA.name:
         display_connection_dashboard()
-    if st.session_state['current_page'] == MenuOption.ANALYSE.name:
+    if switch == MenuOption.ANALYSE.name:
         display_analysis_dashboard()
-    if st.session_state['current_page'] == MenuOption.TRACK.name:
+    if switch == MenuOption.TRACK.name:
         display_tracking_dashboard()
 
 
