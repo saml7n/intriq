@@ -9,27 +9,23 @@ from streamlit_agraph import agraph
 
 @wrap_in_column
 def display_analysis_dashboard():
-    col1, col2, = st.columns([2, 4])
+    st.title("Operational and Financial KPI Analysis")
+
+    col1, col2, = st.columns([1, 2])
     with col1:
         st.selectbox('Select Company', st.session_state['portfolio_companies'])
 
-    playbook_tab, map_tab = st.tabs(['📒 Playbook', '🗺️ Process Map'])
-
-    with playbook_tab:
-        display_playbook_dashboard()
-
-    with map_tab:
-        st.subheader("Process Map")
-        st.write(
-            "The process map below shows the relations between operational processes and financial metrics for your company. Click on the nodes to see more information about each KPI."
-        )
-        if st.session_state['new_data_added']:
-            with st.form('new_data_added_form'):
-                st.info(
-                    'New data sources have been added. Click to update graph', icon="ℹ️"
-                )
-                if st.form_submit_button("Update Graph"):
-                    st.session_state['new_data_added'] = False
-                    display_loading_bar()
-                    st.experimental_rerun()
-        display_knowledge_graph(updated=not st.session_state['new_data_added'])
+    st.subheader("Process Map")
+    st.write(
+        "The process map below shows the relations between operational processes and financial metrics for your company. Click on the nodes to see more information about each KPI."
+    )
+    if st.session_state['new_data_added']:
+        with st.form('new_data_added_form'):
+            st.info(
+                'New data sources have been added. Click to update graph', icon="ℹ️"
+            )
+            if st.form_submit_button("Update Graph"):
+                st.session_state['new_data_added'] = False
+                display_loading_bar()
+                st.experimental_rerun()
+    display_knowledge_graph(updated=not st.session_state['new_data_added'])

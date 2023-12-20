@@ -15,21 +15,9 @@ class Node:
     modes: list[Mode] = field(default_factory=list)
 
 
-ok_node_styling_dict = dict(
-    size=25,
-    shape="dot",
-    color={
-        'border': 'lightgray', 'background': '#10a3fc',
-        'highlight': {'background': '#83c9ff', 'border': '#10a3fc'}},
-    borderWidth=2,
-    font={'color': '#212121', 'face': 'Helvetica', 'size': 16},
-    shadow={'enabled': True,
-            'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
-)
-
 fk_node_styling_dict = dict(
     size=25,
-    shape="diamond",
+    shape='diamond',
     color={
         'border': '#fff', 'background': '#00C853', 'weight': 'light',
         'highlight': {'background': '#00E676', 'border': '#00C853'}},
@@ -39,19 +27,17 @@ fk_node_styling_dict = dict(
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
 )
 
-lever_node_styling_dict = dict(
+
+ok_node_styling_dict = dict(
     size=25,
-    shape="square",
+    shape='dot',
     color={
-        'border': '#fff',  # Red border for emphasis
-        'background': '#ff4b4b',  # Standard operational node background
-        'highlight': {'background': '#fa9999', 'border': '#ff4b4b'}},  # Highlight changes
-    borderWidth=4,  # Thicker and brighter border
-    font={'color': '#212121', 'face': 'Helvetica',
-          'size': 16, 'bold': True},  # Font adjustments
+        'border': 'lightgray', 'background': '#10a3fc',
+        'highlight': {'background': '#83c9ff', 'border': '#10a3fc'}},
+    borderWidth=2,
+    font={'color': '#212121', 'face': 'Helvetica', 'size': 16},
     shadow={'enabled': True,
-            'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
-    title="Value Lever Node"  # Tooltip on hover
+            'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3}
 )
 
 edge_styling_dict = dict(
@@ -60,11 +46,10 @@ edge_styling_dict = dict(
     font={'color': '#212121', 'face': 'Helvetica', 'size': 10},
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
-    width=2,
     length=400,
     hoverWidth=0.5,
     selectionWidth=2,
-    title="Connection"  # Tooltip on hover
+    title='Connection'  # Tooltip on hover
 )
 
 operational_lever_edge_styling_dict = dict(
@@ -75,122 +60,179 @@ operational_lever_edge_styling_dict = dict(
           'size': 12, 'bold': True},  # Bigger, bolder text
     shadow={'enabled': True,
             'color': 'rgba(0, 0, 0, 0.5)', 'size': 5, 'x': 3, 'y': 3},
-    width=3,  # Thicker line
     length=400,
     hoverWidth=0.5,
     selectionWidth=2,
-    title="Operational Lever Connection"  # Tooltip on hover
+    title='Operational Lever Connection'  # Tooltip on hover
 )
 
-FINANCIAL_METRICS = ['Revenue', 'Gross Margin', 'EBITDA']
 NODES = []
-# Financial nodes
+
+PRIMARY_KPIS = ['Revenue', 'Gross Margin', 'EBITDA']
+
+# Primary KPI nodes
+for i, label in enumerate(PRIMARY_KPIS, start=1):
+    NODES.append(Node(node_data=stNode(
+        id=f'PK{i}', label=label, **fk_node_styling_dict)))
+
+FINANCIAL_METRICS = [
+    'Retail Sales', 'E-commerce Sales', 'Miscellaneous Revenue', 'Employee Salary Costs', 'Retail Revenue'
+]
+
+# Financial KPI nodes
 for i, label in enumerate(FINANCIAL_METRICS, start=1):
     NODES.append(Node(node_data=stNode(
-        id=f"FK{i}", label=label, **fk_node_styling_dict)))
+        id=f'FK{i}', label=label, **fk_node_styling_dict)))
 
-# Operational nodes
+# Operational KPI nodes
 OPERATIONAL_METRICS = [
-    "Inventory \nTurnover", "Supply\nChain\nEfficiency", "Customer\nFootfall",
-    "Online\nSales Growth", "Product\nReturn Rate", "Employee\nSatisfaction",
-    "Marketing\nROI", "Customer\nLifetime\nValue", "Retail\nSpace\nUtilization",
-    "Seasonal\nSales\nPerformance"
+    'Inventory Turnover', 'Supply Chain Efficiency', 'Customer Footfall',
+    'Online Sales Growth', 'Product Return Rate', 'Employee Satisfaction',
+    'Marketing ROI', 'Customer Lifetime Value', 'Retail Space Utilization',
+    'Seasonal Sales Performance', 'Retail Collections', 'Workforce Management', 'Pricing', 'Sales Conversion', 'Fitting Room Footfall', 'Store Footfall'
 ]
 
 for i, label in enumerate(OPERATIONAL_METRICS, start=1):
     NODES.append(Node(node_data=stNode(
-        id=f"OK{i}", label=label, **ok_node_styling_dict)))
+        id=f'OK{i}', label=label, **ok_node_styling_dict)))
 
 # Edges
 EDGES = [
-    Edge(source="OK3", label="Impacts", target="FK1",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK4", label="Boosts", target="FK1",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK7", label="Influences", target="FK1",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK5", label="Reduces", target="FK2",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK1", label="Optimizes", target="FK2",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK2", label="Enhances", target="FK2",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK8", label="Increases", target="FK3",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK6", label="Supports", target="FK3",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK10", label="Varies", target="FK3",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK9", label="Improves", target="FK3",
-         color='gray', **edge_styling_dict),
-    # Additional edges to represent interconnections between operational KPIs
-    Edge(source="OK1", label="Influences", target="OK2",
-         color='gray', **edge_styling_dict),
-    Edge(source="OK3", label="Correlates with",
-         target="OK4", color='gray', **edge_styling_dict)
-    # Add more edges as required
+    # FKs feeding into PKs
+    Edge(source='FK1', label='Strong +', target='PK1',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='FK2', label='Strong +', target='PK1',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='FK3', label='Strong +', target='PK1',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='FK4', label='Strong -', target='PK2',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='FK5', label='Strong -', target='PK1',
+         width=4, color='gray', **edge_styling_dict),
+
+    # Interconnections between Financial KPIs
+    Edge(source='FK1', label='Strong +', target='FK5',
+         width=4, color='gray', **edge_styling_dict),
+
+    # OKs feeding into FKs (focused on PK1 - Revenue)
+    Edge(source='OK1', label='Medium +', target='FK1',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK2', label='Medium +', target='FK2',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK3', label='Medium +', target='FK3',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK4', label='Medium +', target='FK4',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK5', label='Medium -', target='FK5',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK6', label='Strong +', target='FK1',
+         width=6, color='gray', **edge_styling_dict),
+    Edge(source='OK7', label='Medium +', target='FK2',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK8', label='Weak +', target='FK3',
+         width=2, color='gray', **edge_styling_dict),
+    Edge(source='OK9', label='Strong +', target='FK4',
+         width=6, color='gray', **edge_styling_dict),
+    Edge(source='OK10', label='Weak -', target='FK5',
+         width=2, color='gray', **edge_styling_dict),
+
+    # Interconnections between Operational KPIs
+    Edge(source='OK11', label='Medium +', target='OK12',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK13', label='Medium +', target='OK14',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK16', label='Medium +', target='OK15',
+         width=2, color='gray', **edge_styling_dict),
+
+    # Additional insightful connections (OKs to PKs)
+    Edge(source='OK1', label='Medium +', target='PK1',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK3', label='Medium +', target='PK2',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK5', label='Strong -', target='PK3',
+         width=6, color='gray', **edge_styling_dict),
+    Edge(source='OK7', label='Weak +', target='PK1',
+         width=2, color='gray', **edge_styling_dict),
+    Edge(source='OK9', label='Medium +', target='PK2',
+         width=4, color='gray', **edge_styling_dict),
+    Edge(source='OK11', label='Weak +', target='PK3',
+         width=2, color='gray', **edge_styling_dict),
+
+
+    # New Edges Based on Additional Points
+    # 1. Linking Revenue with its components
+    Edge(source='FK1', label='Strong +', target='PK1', width=6,
+         color='gray', **edge_styling_dict),  # Retail Sales to Revenue
+    Edge(source='FK2', label='Strong +', target='PK1', width=6,
+         color='gray', **edge_styling_dict),  # E-commerce Sales to Revenue
+    Edge(source='FK3', label='Strong +', target='PK1', width=6,
+         color='gray', **edge_styling_dict),  # Miscellaneous Revenue to Revenue
+
+    # 2. & 3. Linking Retail Collections to Retail Sales and Employee Salary Costs
+    Edge(
+        source='OK11', label='Strong -', target='FK1', width=6, color='gray', **edge_styling_dict),  # Retail Collections negatively impacting Retail Sales
+    Edge(
+        source='OK11', label='Medium +', target='FK4', width=4, color='gray', **edge_styling_dict),  # Retail Collections leading to increased Employee Salary Costs
+
+    # 4. Linking Conversion to Retail Revenue
+    Edge(source='OK13', label='Strong +', target='FK5', width=6, color='gray',
+         **edge_styling_dict),  # Sales Conversion (Tx) to Retail Revenue
+    Edge(source='OK14', label='Strong +', target='FK5', width=6, color='gray',
+         **edge_styling_dict),  # Sales Conversion (£) to Retail Revenue
+
+    # 5. Fitting Room Footfall vs Store Footfall
+    Edge(source='OK15', label='Medium +', target='OK3', width=4, color='gray',
+         **edge_styling_dict),  # Fitting Room Footfall influencing Store Footfall
+    Edge(source='OK15', label='Weak +', target='FK5', width=2, color='gray', **
+         edge_styling_dict),   # Fitting Room Footfall weakly influencing Retail Revenue
 ]
 
-# Example of a Feedback Loop (Customer Satisfaction to Net Sales to Marketing Effectiveness)
-EDGES.append(Edge(source="OK6",  # Customer Satisfaction
-                  label="Improves",
-                  target="FK1",
-                  color='orange',
-                  **edge_styling_dict,  # Net Sales
-                  )
-             )
-EDGES.append(Edge(source="FK1",  # Net Sales
-                  label="Increases budget for",
-                  target="OK8",  # Marketing Effectiveness
-                  color='orange',
-                  **edge_styling_dict)
-             )
-EDGES.append(Edge(source="OK8",  # Marketing Effectiveness
-                  label="Enhances",
-                  target="OK6",  # Customer Satisfaction
-                  color='orange',
-                  **edge_styling_dict
-                  )
-             )
-# Edge showing leverage point impact
-EDGES.append(Edge(source="OK7",  # Employee Productivity
-                  label="Significantly improves",
-                  target="FK3",  # Reported EBITDA
-                  **operational_lever_edge_styling_dict)
-             )
+
+# Feedback Loop for Sales Conversion and Retail Revenue
+EDGES.extend([
+    Edge(source='FK5', label='Medium +', target='OK3', width=4, color='orange',
+         **edge_styling_dict),  # Retail Revenue to Customer Experience
+    Edge(source='OK3', label='Medium +', target='OK16', width=4, color='orange',
+         **edge_styling_dict),  # Customer Experience to Store Footfall
+    Edge(source='OK16', label='Medium +', target='FK5', width=4, color='orange',
+         **edge_styling_dict),  # Store Footfall to Sales Conversion (£)
+    Edge(source='OK14', label='Medium +', target='FK5', width=4, color='orange',
+         **edge_styling_dict),  # Sales Conversion (£) back to Retail Revenue
+])
+
+# Value Lever Edges
+EDGES.extend([
+    Edge(source='OK15', label='Strong +', target='FK5', width=6, **
+         operational_lever_edge_styling_dict),  # Fitting Room Experience to Retail Revenue
+    # Optimizing Retail Collections to Employee Salary Costs
+    Edge(source='OK11', label='Strong -', target='FK4',
+         width=4, **operational_lever_edge_styling_dict),
+    # Reduced Employee Salary Costs to Retail Revenue
+    Edge(source='FK4', label='Strong +', target='FK5',
+         width=2, **operational_lever_edge_styling_dict),
+])
+
+value_lever_node_ids = ['OK16', 'OK15', 'PK1', 'FK5']
 
 feedback_loop_edges = [
-    Edge(source="OK6", label="Improves", target="FK1", color='orange',
+    Edge(source='OK6', label='Improves', target='FK1', color='orange',
          **edge_styling_dict),  # Customer Satisfaction to Net Sales
-    Edge(source="FK1", label="Increases budget for", target="OK8", color='orange',
+    Edge(source='FK1', label='Increases budget for', target='OK8', color='orange',
          **edge_styling_dict),  # Net Sales to Marketing Effectiveness
-    Edge(source="OK8", label="Enhances", target="OK6", color='orange', **
+    Edge(source='OK8', label='Enhances', target='OK6', color='orange', **
          edge_styling_dict)  # Marketing Effectiveness to Customer Satisfaction
 ]
 
 # Value Lever nodes
-NODES[0].modes.append(Mode.HIGHLIGHT_VALUE_LEVERS)
-NODES[5] = Node(
-    node_data=stNode(
-        id="OK3",
-        label="Customer\nFootfall",
-        **lever_node_styling_dict
-    ),
-    modes=[Mode.HIGHLIGHT_VALUE_LEVERS],
+for node in NODES:
+    if node.node_data.id in value_lever_node_ids:
+        node.modes.append(Mode.HIGHLIGHT_VALUE_LEVERS)
 
-)
-NODES[6].modes.append(Mode.HIGHLIGHT_VALUE_LEVERS)
 
-# Leverage Point Edge
-leverage_point_edge = Edge(
-    source="OK3",
-    label="Significantly improves",
-    target="FK1",
-    **operational_lever_edge_styling_dict
-)  # Employee Productivity to Reported EBITDA
-
-# Append these special edges to the existing EDGES list
-EDGES.extend(feedback_loop_edges)
-EDGES.append(leverage_point_edge)
-
-NODES_TRUNCATED = NODES[:5]
+truncate_node_ids = [
+    'PK1', 'FK1', 'FK2', 'OK1', 'OK2', 'OK3', 'OK4', 'OK5', 'OK6',
+    'OK7', 'OK8', 'OK9', 'OK10', 'OK11', 'OK12', 'OK13', 'OK14', 'OK15', 'OK16'
+]
+NODES_TRUNCATED = [
+    node for node in NODES if node.node_data.id in truncate_node_ids
+]
