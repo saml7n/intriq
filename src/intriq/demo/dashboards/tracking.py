@@ -1,9 +1,10 @@
+import numpy as np
 from st_aggrid import AgGrid, GridOptionsBuilder, ColumnsAutoSizeMode, AgGridTheme
-from chat import display_chatbot
+from components.chat import display_chatbot
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from data_dict import PORTFOLIO_COMPANIES
+from datetime import datetime
 from utils import Initiative, generate_performance_numbers
 
 
@@ -11,8 +12,8 @@ def display_tracking_dashboard():
     st.header("Value Creation Tracking")
     col1, col2, = st.columns([2, 5])
     with col1:
-        st.selectbox('Select Company', PORTFOLIO_COMPANIES, key='company')
-
+        st.selectbox('Select Company',
+                     st.session_state['portfolio_companies'], key='company')
     st.subheader("Your Initiatives")
     col1, col2, colx = st.columns([3, 3, 10])
     # Add any quick action buttons or links here
@@ -24,16 +25,16 @@ def display_tracking_dashboard():
         # Example in-progress initiatives
         in_progress_initiatives = [
             Initiative("Digital Transformation for Inventory Management", "Technology", "1 year", [
-                       "Inventory Accuracy", "Stock Turnover Rate"], "In Progress", "30%", "🟠"),
+                       "Inventory Accuracy", "Stock Turnover Rate"], "$1.6M", "In Progress", "30%", "🟠"),
             Initiative("Employee Training Program for Enhanced Customer Service", "Human Resources", "9 months",
-                       ["Customer Satisfaction", "Employee Skill Level"], "In Progress", "50%", "🟢"),
+                       ["Customer Satisfaction", "Employee Skill Level"], "$0.3M", "In Progress", "50%", "🟢"),
             Initiative("Sustainability Initiative for Eco-Friendly Packaging", "Operations", "6 months",
-                       ["Waste Reduction", "Customer Eco-Satisfaction"], "In Progress", "40%", "🟢"),
+                       ["Waste Reduction", "Customer Eco-Satisfaction"], "$0.8M", "In Progress", "40%", "🟢"),
             Initiative("Development of a Loyalty Program", "Marketing", "8 months", [
-                       "Customer Retention Rate", "Repeat Purchase Rate"], "In Progress", "20%", "🟠"),
+                       "Customer Retention Rate", "Repeat Purchase Rate"], "$1.9M", "In Progress", "20%", "🟠"),
             Initiative("Expansion of E-commerce Platform", "E-Commerce", "1 year",
-                       ["Online Sales Growth", "Website Traffic"], "In Progress", "35%", "🟠"),
-            Initiative("Optimization of Supply Chain Logistics", "Supply Chain", "1.5 years", ["Logistics Cost Reduction", "Delivery Time"], "In Progress", "60%", "🟢")] + st.session_state.get('initiatives', [])
+                       ["Online Sales Growth", "Website Traffic"], "$0.7M", "In Progress", "35%", "🟠",),
+            Initiative("Optimization of Supply Chain Logistics", "Supply Chain", "1.5 years", ["Logistics Cost Reduction", "Delivery Time"],  "$0.3M", "In Progress", "60%", "🟢")] + st.session_state.get('initiatives', [])
 
     # Convert data class objects to DataFrame for AgGrid
     data = [initiative.to_dict()
@@ -67,26 +68,39 @@ def display_vci_details(vci_data):
     col2.metric("Current Status", vci_data["Current Status"], "📊")
     col3.metric("Progress", vci_data["Progress"], "🚀")
 
-    # Sample performance data
-    performance_df = pd.DataFrame(
-        generate_performance_numbers(
-            ['Inventory Accuracy', 'Stock Turnover Rate', 'Revenue'],
-            ''
-        ),
-        index=pd.date_range(
-            '2022-12-01', periods=12, freq='M'
-        ),
-    )
-    performance_df.index.name = 'Date'
+    impact_df, performance_df = generate_financial_data()
 
-    # Creating a graph to show performance with Plotly Express
-    fig = px.line(
-        performance_df,
-        labels={'value': f'% improvement'},
+    show_absolute = st.toggle(
+        "Show financial impact",
+        key='graph_type',
     )
-    fig.update_layout(plot_bgcolor='rgba(0,0,0,0)',
-                      xaxis=dict(showgrid=False),
-                      yaxis=dict(showgrid=False))
+
+    # Modify performance data based on selected graph type
+
+    if show_absolute:
+        graph_df = impact_df
+        # Adjust the label as needed
+        y_label = 'Impact on Revenue ($ in thousands)'
+    else:
+        # For % change, use the existing performance data
+        graph_df = performance_df
+        y_label = '% Change'
+
+    # Plot the graph
+    fig = px.line(
+        graph_df,
+        labels={'value': y_label},
+        markers=True
+    )
+
+    initiative_start_date = pd.to_datetime('2023-12-01')
+    fig.add_vline(x=initiative_start_date, line_dash="dash")
+
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=False),
+    )
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -103,7 +117,19 @@ def display_vci_details(vci_data):
             "Stock Turnover Rate": "🟠",
         }
         for kpi, status in kpis.items():
-            st.write(f"{kpi}: {status}")
+            latest_percentage_change = int(performance_df[kpi].iloc[-1])
+            latest_dollar_impact = impact_df[kpi].iloc[-1]
+
+            col1, col2, col3, col4 = st.columns([1, 1, 1, 4])
+            with col1:
+                st.markdown(f"<b>{kpi}: {status}</b>", unsafe_allow_html=True)
+            with col2:
+                st.markdown(
+                    f"<b>% Change:</b> {latest_percentage_change}%", unsafe_allow_html=True)
+            with col3:
+                st.markdown(
+                    f"<b>$ Impact:</b> {latest_dollar_impact}", unsafe_allow_html=True)
+
         col1, col2, col3 = st.columns([3, 3, 18])
         with col1:
             st.button('➕ Add New')
@@ -138,3 +164,47 @@ def display_vci_details(vci_data):
             - 📋 [Inventory Management System Requirements Specification](#)
             - 📒 [Change Management and Training Guide](#)
         """)
+
+
+def generate_financial_data():
+    # Parameters for financial impact
+    start_inventory_acc_impact, end_inventory_acc_impact, fluctuation_inventory_acc_impact = 300, 580, 50
+    start_stock_turnover_impact, end_stock_turnover_impact, fluctuation_stock_turnover_impact = 200, 400, 30
+
+    start_inventory_acc_pct, end_inventory_acc_pct, fluctuation_inventory_acc_pct = 5, 8, 1
+    start_stock_turnover_pct, end_stock_turnover_pct, fluctuation_stock_turnover_pct = 3, 6, 1
+    start_revenue_pct, end_revenue_pct, fluctuation_revenue_pct = 2, 4, 5
+
+    # Generate financial impact data
+    inventory_accuracy_impact = generate_realistic_impact(
+        start_inventory_acc_impact, end_inventory_acc_impact, fluctuation_inventory_acc_impact, 'investory_accuracy')
+    stock_turnover_rate_impact = generate_realistic_impact(
+        start_stock_turnover_impact, end_stock_turnover_impact, fluctuation_stock_turnover_impact, 'stock_turnover_rate')
+
+    # Generate percentage change data
+    inventory_accuracy_pct = generate_realistic_impact(
+        start_inventory_acc_pct, end_inventory_acc_pct, fluctuation_inventory_acc_pct, 'inventory_accuracy')
+    stock_turnover_rate_pct = generate_realistic_impact(
+        start_stock_turnover_pct, end_stock_turnover_pct, fluctuation_stock_turnover_pct, 'stock_turnover_rate')
+    revenue_pct = generate_realistic_impact(
+        start_revenue_pct, end_revenue_pct, fluctuation_revenue_pct, 'revenue')
+
+    impact_df = pd.DataFrame(
+        {
+            'Inventory Accuracy': inventory_accuracy_impact,
+            'Stock Turnover Rate': stock_turnover_rate_impact
+        },
+        index=[*pd.date_range('2023-06-01', periods=6, freq='M'), *pd.date_range('2023-12-01', periods=3, freq='Q')])
+
+    pct_df = pd.DataFrame({
+        'Inventory Accuracy': inventory_accuracy_pct,
+        'Stock Turnover Rate': stock_turnover_rate_pct,
+        'Revenue': revenue_pct,
+    }, index=impact_df.index)
+
+    return impact_df, pct_df
+
+
+@st.cache_data(ttl=60*60*24)
+def generate_realistic_impact(start_value, end_value, fluctuation, key):
+    return np.round([*np.linspace(start_value, end_value*0.5, 6) + np.random.uniform(-fluctuation, fluctuation, 6), *np.linspace(end_value*0.5, end_value, 3) + np.random.uniform(-fluctuation*2, fluctuation*2, 3)], 2)

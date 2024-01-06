@@ -1,8 +1,8 @@
-PORTFOLIO_COMPANIES = [
-    'Fortnum & Mason',
+INITIAL_PORTFOLIO_COMPANIES = [
+    'Crew Clothing',
     'Lakeland',
     'Boux Avenue',
-    'Crew Clothing',
+    'Fortnum & Mason',
     'Paperchase',
     'Whistles',
     'Hobbs London',
